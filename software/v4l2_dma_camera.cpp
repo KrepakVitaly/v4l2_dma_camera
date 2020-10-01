@@ -18,6 +18,32 @@
 #include <ctime>
 #include <stdint.h>
 
+
+#include <getopt.h>
+
+
+#define PACKET_SIZE 164
+#define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
+#define PACKETS_PER_FRAME 60
+#define FRAME_SIZE_UINT16 (PACKET_SIZE_UINT16*PACKETS_PER_FRAME)
+#define FPS 27;
+
+using namespace std;
+
+
+static char const *v4l2dev = "/dev/video1";
+static char *spidev = NULL;
+static int v4l2sink = -1;
+static int width = 80;                //640;    // Default for Flash
+static int height = 60;        //480;    // Default for Flash
+static char *vidsendbuf = NULL;
+static int vidsendsiz = 0;
+
+static int resets = 0;
+static uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
+static uint16_t *frameBuffer;
+
+
 static const char short_options[] = "d:hv:";
 static const struct option long_options[] = {
     { "device",  required_argument, NULL, 'd' },
