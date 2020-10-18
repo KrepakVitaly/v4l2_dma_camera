@@ -17,8 +17,6 @@
 #include <fstream>
 #include <ctime>
 #include <stdint.h>
-
-
 #include <getopt.h>
 
 
@@ -28,21 +26,21 @@
 #define FRAME_SIZE_UINT16 (PACKET_SIZE_UINT16*PACKETS_PER_FRAME)
 #define FPS 27
 
-using namespace std;
+#define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
 
+using namespace std;
 
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
 static int width = 480;                //640;    //
 static int height = 320;        //480;    // 
-static char *vidsendbuf = NULL;
+static char * frame_buff = NULL;
 static int vidsendsiz = 0;
 
 //static int resets = 0;
 //static uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
 //static uint16_t *frameBuffer;
-
 
 static const char short_options[] = "d:hv:";
 static const struct option long_options[] = {
@@ -51,7 +49,6 @@ static const struct option long_options[] = {
     { "video",   required_argument, NULL, 'v' },
     { 0, 0, 0, 0 }
 };
-
 
 static void close_vpipe()
 {
@@ -83,32 +80,105 @@ static void open_vpipe()
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
         exit(t);
+    //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
+    //assert(allocated);
     vidsendbuf = (char*)malloc( vidsendsiz );
 
 }
 
+static int  get_dma_data(char* devicename, 
+                         uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
+                         char* buffer)
+{
+    int rc;
+    //char* buffer = NULL;
+    //char* allocated = NULL;
+    struct timespec ts_start, ts_end;
+    char* filename = NULL;;
+
+    //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
+    //assert(allocated);
+    //buffer = allocated + offset;
+    printf("host memory buffer = %p\n", buffer);
+
+    int file_fd = -1;
+    int fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
+    assert(fpga_fd >= 0);
+
+    /* create file to write data to */
+    /*if (filename) {
+        file_fd = open(filename, O_RDWR | O_CREAT | O_TRUNC | O_SYNC, 0666);
+        assert(file_fd >= 0);
+    }*/
+
+    while (count--) {
+        memset(buffer, 0x00, size);
+        /* select AXI MM address */
+        off_t off = lseek(fpga_fd, addr, SEEK_SET);
+        rc = clock_gettime(CLOCK_MONOTONIC, &ts_start);
+        /* read data from AXI MM into buffer using SGDMA */
+        rc = read(fpga_fd, buffer, size);
+        if ((rc > 0) && (rc < size)) {
+            printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
+        }
+        rc = clock_gettime(CLOCK_MONOTONIC, &ts_end);
+        /* file argument given? */
+        if ((file_fd >= 0) & (no_write == 0)) {
+            /* write buffer to file */
+            rc = write(file_fd, buffer, size);
+            assert(rc == size);
+        }
+    }
+    /* subtract the start time from the end time */
+    timespec_sub(&ts_end, &ts_start);
+    /* display passed time, a bit less accurate but side-effects are accounted for */
+    printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
+
+    close(fpga_fd);
+    if (file_fd >= 0) {
+        close(file_fd);
+    }
+    //free(allocated);
+
+    return 0;
+}
+
+
+void get_frame(char* frame_buff, uint16_t pattern)
+{
+    int row, column;
+    uint16_t valuet = value;
+    uint16_t minValue = 65535;
+    uint16_t maxValue = 0;
+
+    if (pattern == 0)
+    {
+        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, vidsendbuf)
+    }
+    else
+    {
+        for (int i = 0; i < FRAME_SIZE_UINT16; i++) {
+            if (i % PACKET_SIZE_UINT16 < 2) {
+                continue;
+            }
+            //(frameBuffer[i] - minValue) * scale;
+            //const int *colormap = colormap_ironblack;
+            column = (i % PACKET_SIZE_UINT16) - 2;
+            row = i / PACKET_SIZE_UINT16;
+
+            // Set video buffer pixel to scaled colormap value
+            int idx = row * width * 3 + column * 3;
+            frame_buff[idx + 0] = value++;
+            frame_buff[idx + 1] = value++;
+            frame_buff[idx + 2] = value++;
+        }
+    }
+
+}
+
+
 void send_frame(uint16_t value)
 {
-	int row, column;
-    	uint16_t valuet = value;
-	uint16_t minValue = 65535;
-    	uint16_t maxValue = 0;
-
-        for (int i = 0; i < FRAME_SIZE_UINT16; i++) {
-        if (i % PACKET_SIZE_UINT16 < 2) {
-            continue;
-        }
-        //(frameBuffer[i] - minValue) * scale;
-        //const int *colormap = colormap_ironblack;
-        column = (i % PACKET_SIZE_UINT16) - 2;
-        row = i / PACKET_SIZE_UINT16;
-
-        // Set video buffer pixel to scaled colormap value
-        int idx = row * width * 3 + column * 3;
-        vidsendbuf[idx + 0] = value++;
-        vidsendbuf[idx + 1] = value++;
-        vidsendbuf[idx + 2] = value++;
-   	 }
 	write(v4l2sink, vidsendbuf, vidsendsiz);
 }
 
@@ -180,8 +250,8 @@ int main(int argc, char **argv)
     uint16_t i = 0;
     while(1)
     {
-        i++;
-	send_frame(i);
+        //i++;
+	send_frame(0);
 	usleep(41000);
 	printf("Frame %d\r\n", i);
     }
