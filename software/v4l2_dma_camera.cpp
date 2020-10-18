@@ -153,7 +153,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
     if (pattern == 0)
     {
-        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, vidsendbuf)
+        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, frame_buff)
     }
     else
     {
@@ -177,8 +177,9 @@ void get_frame(char* frame_buff, uint16_t pattern)
 }
 
 
-void send_frame(uint16_t value)
+void send_frame(uint16_t pattern)
 {
+    get_frame(vidsendbuf, pattern);
 	write(v4l2sink, vidsendbuf, vidsendsiz);
 }
 
