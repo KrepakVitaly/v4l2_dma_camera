@@ -1,0 +1,7 @@
+*.o
+*.flv
+*.mp4
+*.bin
+
+
+software/v4l2_dma_camera
