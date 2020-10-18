@@ -54,6 +54,7 @@
 #define FPS 27
 
 #define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
+#define XDMA_DEVICE_USER  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
 #define XDMA_FRAME_WIDTH 2064
 #define XDMA_FRAME_HEIGHT 1544
@@ -192,7 +193,7 @@ static int exposure_frame(char* devicename)
         read_result = *((uint32_t*)virt_addr);
         read_result = ltohl(read_result);
         printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-    } while (read_result == 0)
+    } while (read_result == 0);
     fflush(stdout);
 
     // Его нужно сбросить в 0
@@ -213,7 +214,7 @@ static int get_dma_data(char* devicename,
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
 {
-    exposure_frame(devicename);
+    exposure_frame(XDMA_DEVICE_USER);
 
     int rc;
     //char* buffer = NULL;
