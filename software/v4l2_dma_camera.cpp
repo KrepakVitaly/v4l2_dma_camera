@@ -88,8 +88,8 @@ static void timespec_sub(struct timespec* t1, const struct timespec* t2)
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
-static int width = 480;                //640;    //
-static int height = 320;        //480;    // 
+static int width = 2064;  // 480;                //640;    //
+static int height = 1544;// 320;        //480;    // 
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
@@ -192,8 +192,9 @@ static int exposure_frame(char* devicename)
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         read_result = *((uint32_t*)virt_addr);
         read_result = ltohl(read_result);
-        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     } while (read_result == 0);
+    printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     fflush(stdout);
 
     // Его нужно сбросить в 0
