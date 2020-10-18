@@ -153,7 +153,7 @@ static void open_vpipe()
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB8;
-    vidsendsiz = width * height * 3;
+    vidsendsiz = width * height * 2;
     v.fmt.pix.sizeimage = vidsendsiz;
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
@@ -371,7 +371,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
         get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 
                      XDMA_FRAME_BASE_ADDR, 
-                     width * height * 3, 0, 1, 
+                     vidsendsiz, 0, 1,
                      frame_buff);
     }
     else
