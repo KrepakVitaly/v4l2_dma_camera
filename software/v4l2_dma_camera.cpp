@@ -88,8 +88,8 @@ static void timespec_sub(struct timespec* t1, const struct timespec* t2)
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
-static int width = 640;  // 480;                //640;    //
-static int height = 480;// 320;        //480;    // 
+static int width = 480;  // 480;                //640;    //
+static int height = 320;// 320;        //480;    // 
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
@@ -157,7 +157,7 @@ static int reg_read()
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
 
-static int exposure_frame(char* devicename)
+static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern, int digital_iso)
 {
     int fd;
     void* map_base, * virt_addr;
@@ -173,6 +173,62 @@ static int exposure_frame(char* devicename)
     if (map_base == (void*)-1) FATAL;
     printf("Memory mapped at address %p.\n", map_base);
     fflush(stdout);
+
+    if (pattern == 1)
+    {
+        target = 10; //включить паттер генератор,
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = 1;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        fflush(stdout);
+    }
+    else
+    {
+        target = 10; //выключить паттер генератор,
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = 0;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        fflush(stdout);
+    }
+
+    if (exposure_time >= 0x00000040 || exposure_time <= 0x00000920)
+    {
+        target = 20; 
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = exposure_time;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        
+        exposure_time = (exposure_time * 2 * 0x1c8);
+        float exp_time_sec = (float)exposure_time / 54000000;
+        printf("Exposure time = %f seconds\r\n", exp_time_sec);
+        fflush(stdout);
+
+    }
+        //0xf71f0020 регистр 32 бит, 0x00000040 Ц максимальное врем€ экспозиции(0, 0389 с),
+        //0x00000920 Ц минимальное врем€ экспозиции(0, 0005573 c).«начени€ вне этого интервала
+        //игнорируютс€.
+        //¬рем€ экспозиции = (0x941 Ц значение регистра) * (2 * 0x1c8) / 54000000 c
+        //0xf71f0030 регистр 32 бит, 0x00000000 Ц минимальное значение аналогового усилени€,
+        //0x000000ff Ц максимальное значение аналогового усилени€.«начени€ вне этого интервала
+        //игнорируютс€.
+    if (digital_iso >= 0x00000000 || digital_iso <= 0x000000ff)
+    {
+        target = 30; 
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = digital_iso;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        printf("Digital ISO = %f \r\n", digital_iso);
+        fflush(stdout);
+
+    }
 
 
     //записать 1 в регистр с адресом 0. — помощью этой команды драйвер дает команду zynq записать кадр с сенсора в zynq.
@@ -215,7 +271,7 @@ static int get_dma_data(char* devicename,
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
 {
-    exposure_frame(XDMA_DEVICE_USER);
+    exposure_frame(XDMA_DEVICE_USER, 0x420, 1, 0x80);
 
     int rc;
     //char* buffer = NULL;
