@@ -176,7 +176,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
 
     if (pattern == 1)
     {
-        target = 10; //включить паттер генератор,
+        target = 0x10; //включить паттер генератор,
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = 1;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -186,7 +186,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     }
     else
     {
-        target = 10; //выключить паттер генератор,
+        target = 0x10; //выключить паттер генератор,
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = 0;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -197,7 +197,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
 
     if (exposure_time >= 0x00000040 || exposure_time <= 0x00000920)
     {
-        target = 20; 
+        target = 0x20; 
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = exposure_time;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -219,7 +219,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         //игнорируются.
     if (digital_iso >= 0x00000000 || digital_iso <= 0x000000ff)
     {
-        target = 30; 
+        target = 0x30;
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = digital_iso;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -244,7 +244,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     do
     {
         usleep(100);
-        target = 4;
+        target = 0x4;
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         read_result = *((uint32_t*)virt_addr);
         read_result = ltohl(read_result);
@@ -254,7 +254,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     fflush(stdout);
 
     // Его нужно сбросить в 0
-    target = 4;
+    target = 0x4;
     virt_addr = map_base + target; /* calculate the virtual address to be accessed */
     writeval = 0;
     writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
