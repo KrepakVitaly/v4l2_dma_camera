@@ -21,6 +21,22 @@
 #include <getopt.h>
 #include <assert.h>
 
+/* ltoh: little to host */
+/* htol: little to host */
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#  define ltohl(x)       (x)
+#  define ltohs(x)       (x)
+#  define htoll(x)       (x)
+#  define htols(x)       (x)
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#  define ltohl(x)     __bswap_32(x)
+#  define ltohs(x)     __bswap_16(x)
+#  define htoll(x)     __bswap_32(x)
+#  define htols(x)     __bswap_16(x)
+#endif
+
+
+
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
 #define PACKETS_PER_FRAME 60
@@ -28,6 +44,9 @@
 #define FPS 27
 
 #define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
+#define XDMA_FRAME_BASE_ADDR 0x200000
+#define XDMA_FRAME_WIDTH 2064
+#define XDMA_FRAME_HEIGHT 1544
 
 using namespace std;
 
@@ -111,10 +130,80 @@ static void open_vpipe()
 
 }
 
-static int  get_dma_data(char* devicename, 
+#define FATAL do { fprintf(stderr, "Error at line %d, file %s (%d) [%s]\n", __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
+
+
+static int reg_write()
+{
+
+}
+
+static int reg_read()
+{
+
+}
+
+static int exposure_frame(char* devicename)
+{
+    int fd;
+    void* map_base, * virt_addr;
+    uint32_t read_result, writeval;
+    off_t target;
+    /* access width */
+    int access_width = 'w';
+
+    if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
+    printf("character device %s opened.\n", argv[1]);
+    fflush(stdout);
+
+    /* map one page */
+    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (map_base == (void*)-1) FATAL;
+    printf("Memory mapped at address %p.\n", map_base);
+    fflush(stdout);
+
+
+    //записать 1 в регистр с адресом 0. С помощью этой команды драйвер дает команду zynq записать кадр с сенсора в zynq.
+    target = 0;
+    virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+    writeval = 1;
+    writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+    *((uint32_t*)virt_addr) = writeval;
+    printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    fflush(stdout);
+
+    //записал ли zynq кадр в память.
+    do
+    {
+        usleep(100);
+        target = 4;
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        read_result = *((uint32_t*)virt_addr);
+        read_result = ltohl(read_result);
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    } while (read_result == 0)
+    fflush(stdout);
+
+    // Его нужно сбросить в 0
+    target = 4;
+    virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+    writeval = 0;
+    writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+    *((uint32_t*)virt_addr) = writeval;
+    printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    fflush(stdout);
+
+
+    close(fd);
+    return 0;
+}
+
+static int get_dma_data(char* devicename, 
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
 {
+    exposure_frame(devicename)
+
     int rc;
     //char* buffer = NULL;
     //char* allocated = NULL;
@@ -179,7 +268,10 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
     if (pattern == 0)
     {
-        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, frame_buff);
+        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 
+                     XDMA_FRAME_BASE_ADDR, 
+                     width * height * 3, 0, 1, 
+                     frame_buff);
     }
     else
     {
@@ -202,13 +294,11 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
 }
 
-
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
 	write(v4l2sink, vidsendbuf, vidsendsiz);
 }
-
 
 void usage(char* exec)
 {
@@ -221,8 +311,6 @@ void usage(char* exec)
         "(%s by default)\n"
         "", exec, v4l2dev);
 }
-
-
 
 int main(int argc, char **argv)
 {
