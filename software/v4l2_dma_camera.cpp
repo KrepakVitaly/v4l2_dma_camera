@@ -30,6 +30,14 @@
 
 #include <sys/mman.h>
 
+#include<stdio.h>
+#include<signal.h>
+#include<unistd.h>
+
+
+
+
+
 
 /* ltoh: little to host */
 /* htol: little to host */
@@ -97,6 +105,10 @@ static int vidsendsiz = 0;
 //static uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
 //static uint16_t *frameBuffer;
 
+
+int fd;
+int fpga_fd;
+
 static const char short_options[] = "d:hv:";
 static const struct option long_options[] = {
     { "device",  required_argument, NULL, 'd' },
@@ -111,6 +123,16 @@ static void close_vpipe()
 	printf("V4L2 sink closed\r\n");
 	return;
 }
+
+void sig_handler(int signum) {
+
+    //Return type of the handler function should be void
+    printf("\nInside handler function\n");
+    close_vpipe();
+    close(fd);
+    close(fpga_fd);
+}
+
 
 static void open_vpipe()
 {
@@ -129,7 +151,7 @@ static void open_vpipe()
         exit(t);
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
-    v.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB8;
     vidsendsiz = width * height * 3;
     v.fmt.pix.sizeimage = vidsendsiz;
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
@@ -157,9 +179,12 @@ static int reg_read()
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
 
+
+
+
 static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern, int digital_iso)
 {
-    int fd;
+    
     void* map_base, * virt_addr;
     uint32_t read_result, writeval;
     off_t target;
@@ -208,7 +233,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         
         exposure_time = (exposure_time * 2 * 0x1c8);
         float exp_time_sec = (float)exposure_time / 54000000;
-        printf("Exposure time = %f seconds\r\n", exp_time_sec);
+        //printf("Exposure time = %f seconds\r\n", exp_time_sec);
         fflush(stdout);
 
     }
@@ -269,6 +294,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     return 0;
 }
 
+
+
 static int get_dma_data(char* devicename, 
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
@@ -287,7 +314,7 @@ static int get_dma_data(char* devicename,
     //printf("host memory buffer = %p\n", buffer);
 
     int file_fd = -1;
-    int fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
+    fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
     assert(fpga_fd >= 0);
 
     /* create file to write data to */
@@ -387,6 +414,7 @@ void usage(char* exec)
 
 int main(int argc, char **argv)
 {
+    signal(SIGINT, sig_handler); // Register signal handler
     // processing command line parameters
     for (;;) {
         int index;
