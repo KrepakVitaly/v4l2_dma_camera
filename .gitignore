@@ -3,5 +3,6 @@
 *.mp4
 *.bin
 
+*.o.d
 
 software/v4l2_dma_camera

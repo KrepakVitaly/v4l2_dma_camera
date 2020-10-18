@@ -1,0 +1,4 @@
+tests/dma_from_device
+tests/dma_to_device
+tests/performance
+tests/reg_rw
