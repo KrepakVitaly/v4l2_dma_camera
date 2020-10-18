@@ -26,7 +26,7 @@
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
 #define PACKETS_PER_FRAME 60
 #define FRAME_SIZE_UINT16 (PACKET_SIZE_UINT16*PACKETS_PER_FRAME)
-#define FPS 27;
+#define FPS 27
 
 using namespace std;
 
@@ -34,8 +34,8 @@ using namespace std;
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
-static int width = 80;                //640;    //
-static int height = 60;        //480;    // 
+static int width = 480;                //640;    //
+static int height = 320;        //480;    // 
 static char *vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
@@ -67,7 +67,7 @@ static void open_vpipe()
     if (v4l2sink < 0) {
         fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
         exit(-2);
-    } 
+    }
     // setup video for proper format
     struct v4l2_format v;
     int t;
@@ -87,10 +87,10 @@ static void open_vpipe()
 
 }
 
-void send_frame()
+void send_frame(uint16_t value)
 {
 	int row, column;
-    	uint16_t value;
+    	uint16_t valuet = value;
 	uint16_t minValue = 65535;
     	uint16_t maxValue = 0;
 
@@ -98,16 +98,16 @@ void send_frame()
         if (i % PACKET_SIZE_UINT16 < 2) {
             continue;
         }
-        value = i+5;//(frameBuffer[i] - minValue) * scale;
+        //(frameBuffer[i] - minValue) * scale;
         //const int *colormap = colormap_ironblack;
         column = (i % PACKET_SIZE_UINT16) - 2;
         row = i / PACKET_SIZE_UINT16;
 
         // Set video buffer pixel to scaled colormap value
         int idx = row * width * 3 + column * 3;
-        vidsendbuf[idx + 0] = 3 * value;
-        vidsendbuf[idx + 1] = 3 * value + 1;
-        vidsendbuf[idx + 2] = 3 * value + 2;
+        vidsendbuf[idx + 0] = value++;
+        vidsendbuf[idx + 1] = value++;
+        vidsendbuf[idx + 2] = value++;
    	 }
 	write(v4l2sink, vidsendbuf, vidsendsiz);
 }
@@ -163,12 +163,27 @@ int main(int argc, char **argv)
         }
     }
 
+
     open_vpipe();
+
+    printf("Video Parameters\r\n"
+           "PACKET_SIZE = %d,\r\n"
+           "PACKET_SIZE_UINT16 = %d\r\n"
+           "PACKETS_PER_FRAME = %d\r\n"
+           "FRAME_SIZE_UINT16 = %d\r\n"
+           "FPS = %d\r\n"
+           "width = %d height = %d\r\n"
+           "video buf size = %d\r\n",
+           PACKET_SIZE, PACKET_SIZE_UINT16, PACKETS_PER_FRAME, FRAME_SIZE_UINT16, FPS, width, height, vidsendsiz);
+
+
+    uint16_t i = 0;
     while(1)
     {
-	send_frame();
+        i++;
+	send_frame(i);
 	usleep(41000);
-	//printf("Frame\r\n");
+	printf("Frame %d\r\n", i);
     }
     close_vpipe();
 
