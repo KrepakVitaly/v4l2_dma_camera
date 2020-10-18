@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
+#include <time.h>
 #include <malloc.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -18,7 +19,7 @@
 #include <ctime>
 #include <stdint.h>
 #include <getopt.h>
-
+#include <assert.h>
 
 #define PACKET_SIZE 164
 #define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
@@ -30,12 +31,36 @@
 
 using namespace std;
 
+/* Subtract timespec t2 from t1
+ *
+ * Both t1 and t2 must already be normalized
+ * i.e. 0 <= nsec < 1000000000 */
+static void timespec_sub(struct timespec* t1, const struct timespec* t2)
+{
+    assert(t1->tv_nsec >= 0);
+    assert(t1->tv_nsec < 1000000000);
+    assert(t2->tv_nsec >= 0);
+    assert(t2->tv_nsec < 1000000000);
+    t1->tv_sec -= t2->tv_sec;
+    t1->tv_nsec -= t2->tv_nsec;
+    if (t1->tv_nsec >= 1000000000)
+    {
+        t1->tv_sec++;
+        t1->tv_nsec -= 1000000000;
+    }
+    else if (t1->tv_nsec < 0)
+    {
+        t1->tv_sec--;
+        t1->tv_nsec += 1000000000;
+    }
+}
+
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
 static int width = 480;                //640;    //
 static int height = 320;        //480;    // 
-static char * frame_buff = NULL;
+static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
 //static int resets = 0;
@@ -123,11 +148,11 @@ static int  get_dma_data(char* devicename,
         }
         rc = clock_gettime(CLOCK_MONOTONIC, &ts_end);
         /* file argument given? */
-        if ((file_fd >= 0) & (no_write == 0)) {
-            /* write buffer to file */
-            rc = write(file_fd, buffer, size);
-            assert(rc == size);
-        }
+        //if ((file_fd >= 0) & (no_write == 0)) {
+        //    /* write buffer to file */
+        //    rc = write(file_fd, buffer, size);
+        //    assert(rc == size);
+        //} 
     }
     /* subtract the start time from the end time */
     timespec_sub(&ts_end, &ts_start);
@@ -147,13 +172,14 @@ static int  get_dma_data(char* devicename,
 void get_frame(char* frame_buff, uint16_t pattern)
 {
     int row, column;
-    uint16_t valuet = value;
+    uint16_t valuet = pattern;
+    uint16_t value = 0;
     uint16_t minValue = 65535;
     uint16_t maxValue = 0;
 
     if (pattern == 0)
     {
-        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, frame_buff)
+        get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 0x200000, width * height * 3, 0, 1, frame_buff);
     }
     else
     {
