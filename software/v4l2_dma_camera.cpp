@@ -21,6 +21,16 @@
 #include <getopt.h>
 #include <assert.h>
 
+
+
+#include <byteswap.h>
+
+#include <ctype.h>
+#include <termios.h>
+
+#include <sys/mman.h>
+
+
 /* ltoh: little to host */
 /* htol: little to host */
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -143,17 +153,18 @@ static int reg_read()
 
 }
 
+#define MAP_SIZE (32*1024UL)
+#define MAP_MASK (MAP_SIZE - 1)
+
 static int exposure_frame(char* devicename)
 {
     int fd;
     void* map_base, * virt_addr;
     uint32_t read_result, writeval;
     off_t target;
-    /* access width */
-    int access_width = 'w';
 
     if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
-    printf("character device %s opened.\n", argv[1]);
+    printf("character device %s opened.\n", devicename);
     fflush(stdout);
 
     /* map one page */
@@ -202,7 +213,7 @@ static int get_dma_data(char* devicename,
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
 {
-    exposure_frame(devicename)
+    exposure_frame(devicename);
 
     int rc;
     //char* buffer = NULL;
