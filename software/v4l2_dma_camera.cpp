@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     while(1)
     {
 	send_frame();
-	sleep(1);
+	usleep(41000);
 	//printf("Frame\r\n");
     }
     close_vpipe();
