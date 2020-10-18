@@ -165,13 +165,13 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     off_t target;
 
     if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
-    printf("character device %s opened.\n", devicename);
+    //printf("character device %s opened.\n", devicename);
     fflush(stdout);
 
     /* map one page */
     map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (map_base == (void*)-1) FATAL;
-    printf("Memory mapped at address %p.\n", map_base);
+    //printf("Memory mapped at address %p.\n", map_base);
     fflush(stdout);
 
     if (pattern == 1)
@@ -182,7 +182,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("pattern generator enabled\r\n");
+        //printf("pattern generator enabled\r\n");
         fflush(stdout);
     }
     else
@@ -193,7 +193,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("pattern generator disabled\r\n");
+        //printf("pattern generator disabled\r\n");
         fflush(stdout);
     }
 
@@ -227,7 +227,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("Digital ISO = %d \r\n", digital_iso);
+        //printf("Digital ISO = %d \r\n", digital_iso);
         fflush(stdout);
 
     }
@@ -273,7 +273,7 @@ static int get_dma_data(char* devicename,
                          uint32_t addr, uint32_t size, uint32_t offset, uint32_t count, 
                          char* buffer)
 {
-    exposure_frame(XDMA_DEVICE_USER, 0x420, 1, 0x80);
+    
 
     int rc;
     //char* buffer = NULL;
@@ -284,7 +284,7 @@ static int get_dma_data(char* devicename,
     //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
     //assert(allocated);
     //buffer = allocated + offset;
-    printf("host memory buffer = %p\n", buffer);
+    //printf("host memory buffer = %p\n", buffer);
 
     int file_fd = -1;
     int fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
@@ -317,7 +317,7 @@ static int get_dma_data(char* devicename,
     /* subtract the start time from the end time */
     timespec_sub(&ts_end, &ts_start);
     /* display passed time, a bit less accurate but side-effects are accounted for */
-    printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
+    //printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
 
     close(fpga_fd);
     if (file_fd >= 0) {
@@ -339,6 +339,8 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
     if (pattern == 0)
     {
+        exposure_frame(XDMA_DEVICE_USER, 0x420, 1, 0x80);
+
         get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 
                      XDMA_FRAME_BASE_ADDR, 
                      width * height * 3, 0, 1, 
@@ -439,7 +441,7 @@ int main(int argc, char **argv)
         //i++;
 	send_frame(0);
 	usleep(41000);
-	printf("Frame %d\r\n", i);
+	//printf("Frame %d\r\n", i);
     }
     close_vpipe();
 
