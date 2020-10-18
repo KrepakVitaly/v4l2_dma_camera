@@ -131,6 +131,7 @@ void sig_handler(int signum) {
     close_vpipe();
     close(fd);
     close(fpga_fd);
+    exit(0);
 }
 
 
