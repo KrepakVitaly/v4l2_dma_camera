@@ -170,6 +170,16 @@ static void open_vpipe()
     v.fmt.pix.sizeimage = vidsendsiz;
     v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
 
+    printf("V4L2-set0 VIDIOC_G_FMT\r\n");
+
+    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
+    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
+    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
+    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
+    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
+    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
+
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
         exit(t);
