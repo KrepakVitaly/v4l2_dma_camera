@@ -165,7 +165,7 @@ static void open_vpipe()
 
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
-    v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
+    v.fmt.pix.pixelformat = V4L2_PIX_FMT_ARGB444;
     vidsendsiz = width * height * bpp;
     v.fmt.pix.sizeimage = vidsendsiz;
     v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
