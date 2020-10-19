@@ -352,8 +352,8 @@ static int get_dma_data(char* devicename,
     //printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
 
 
-    for (int i = 0; i = 16; i++)
-        printf("0x%02x", buffer[i])
+    for (int j = 0; j < 16; j++)
+        printf("0x%02x", buffer[j])
     printf("\r\n")
 
     close(fpga_fd);
