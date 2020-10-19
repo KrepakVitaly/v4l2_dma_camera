@@ -152,6 +152,18 @@ static void open_vpipe()
     t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
     if( t < 0 )
         exit(t);
+
+    printf("V4L2-get0 VIDIOC_G_FMT\r\n");
+
+    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.width);
+    //printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
+
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
@@ -162,6 +174,19 @@ static void open_vpipe()
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
         exit(t);
+
+    t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
+    if (t < 0)
+        exit(t);
+    printf("V4L2-get1 VIDIOC_G_FMT\r\n");
+
+    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.width);
     //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
     //assert(allocated);
     vidsendbuf = (char*)malloc( vidsendsiz );
