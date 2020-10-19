@@ -96,10 +96,12 @@ static void timespec_sub(struct timespec* t1, const struct timespec* t2)
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
-static int width = 2064;    // 480;        //640;    //
-static int height = 1544;   // 320;        //480;    // 
+static int width = 1552;    // 480;        //640;    //
+static int height = 1024;   // 320;        //480;    // 
+static int bpp = 4; //bytes per pixel
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
+
 
 //static int resets = 0;
 //static uint8_t result[PACKET_SIZE*PACKETS_PER_FRAME];
@@ -153,7 +155,7 @@ static void open_vpipe()
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
-    vidsendsiz = width * height * 2;
+    vidsendsiz = width * height * bpp;
     v.fmt.pix.sizeimage = vidsendsiz;
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
