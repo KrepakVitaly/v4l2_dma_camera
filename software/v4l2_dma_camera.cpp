@@ -98,7 +98,7 @@ static char const *v4l2dev = "/dev/video0";
 static int v4l2sink = -1;
 static int width = 2064;    // 480;        //640;    //
 static int height = 1544;   // 320;        //480;    // 
-static int bpp = 4; //bytes per pixel
+static int bpp = 2; //bytes per pixel
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
@@ -155,7 +155,7 @@ static void open_vpipe()
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
-    vidsendsiz = width * height * 2;
+    vidsendsiz = width * height * bpp;
     v.fmt.pix.sizeimage = vidsendsiz;
     v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
 
@@ -350,6 +350,11 @@ static int get_dma_data(char* devicename,
     timespec_sub(&ts_end, &ts_start);
     /* display passed time, a bit less accurate but side-effects are accounted for */
     //printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
+
+
+    for (int i = 0; i = 16; i++)
+        printf("0x%02x", buffer[i])
+    printf("\r\n")
 
     close(fpga_fd);
     if (file_fd >= 0) {
