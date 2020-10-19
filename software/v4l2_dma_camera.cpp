@@ -96,8 +96,8 @@ static void timespec_sub(struct timespec* t1, const struct timespec* t2)
 static char const *v4l2dev = "/dev/video0";
 //static char *spidev = NULL;
 static int v4l2sink = -1;
-static int width = 2048;    // 480;        //640;    //
-static int height = 1544;   // 320;        //480;    // 
+static int width = 2048/2;    // 480;        //640;    //
+static int height = 1544/2;   // 320;        //480;    // 
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
