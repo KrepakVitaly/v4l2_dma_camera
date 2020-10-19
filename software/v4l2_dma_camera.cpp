@@ -156,13 +156,12 @@ static void open_vpipe()
     printf("V4L2-get0 VIDIOC_G_FMT\r\n");
 
     printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.width);
-    //printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
+    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
+    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
+    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
+    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
+    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
 
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
@@ -181,12 +180,12 @@ static void open_vpipe()
     printf("V4L2-get1 VIDIOC_G_FMT\r\n");
 
     printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.width);
+    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
+    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
+    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
+    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
+    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
+    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
     //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
     //assert(allocated);
     vidsendbuf = (char*)malloc( vidsendsiz );
