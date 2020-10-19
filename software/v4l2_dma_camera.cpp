@@ -152,7 +152,7 @@ static void open_vpipe()
         exit(t);
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
-    v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB8;
+    v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
     vidsendsiz = width * height * 2;
     v.fmt.pix.sizeimage = vidsendsiz;
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
