@@ -157,6 +157,8 @@ static void open_vpipe()
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
     vidsendsiz = width * height * 2;
     v.fmt.pix.sizeimage = vidsendsiz;
+    v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
+
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
         exit(t);
