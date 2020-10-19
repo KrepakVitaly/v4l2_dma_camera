@@ -169,6 +169,7 @@ static void open_vpipe()
     vidsendsiz = width * height * bpp;
     v.fmt.pix.sizeimage = vidsendsiz;
     v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
+    v.fmt.pix.bytesperline = width * bpp;
 
     printf("V4L2-set0 VIDIOC_G_FMT\r\n");
 
