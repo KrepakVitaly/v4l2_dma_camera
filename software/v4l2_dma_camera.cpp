@@ -148,17 +148,23 @@ static void open_vpipe()
     // setup video for proper format
     struct v4l2_format v;
     int t;
-    v.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-    t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
-    if( t < 0 )
-        exit(t);
+    v.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
+    /*
     struct v4l2_fmtdesc fmtdesc;
+    memset(&fmtdesc, 0, sizeof(fmtdesc));
+    fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     while (ioctl(v4l2sink, VIDIOC_ENUM_FMT, &fmtdesc) == 0)
     {
         printf("%s\n", fmtdesc.description);
         fmtdesc.index++;
     }
+    */
+    t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
+    if( t < 0 )
+        exit(t);
+
+
 
     printf("V4L2-get0 VIDIOC_G_FMT\r\n");
 
