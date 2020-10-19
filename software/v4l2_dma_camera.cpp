@@ -64,8 +64,8 @@
 #define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
 #define XDMA_DEVICE_USER  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
-#define XDMA_FRAME_WIDTH 2064
-#define XDMA_FRAME_HEIGHT 1544
+//#define XDMA_FRAME_WIDTH 2064
+//#define XDMA_FRAME_HEIGHT 1544
 
 using namespace std;
 
@@ -153,7 +153,7 @@ static void open_vpipe()
     v.fmt.pix.width = width;
     v.fmt.pix.height = height;
     v.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB12;
-    vidsendsiz = width * height * 2;
+    vidsendsiz = width * height * 4;
     v.fmt.pix.sizeimage = vidsendsiz;
     t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
     if( t < 0 )
