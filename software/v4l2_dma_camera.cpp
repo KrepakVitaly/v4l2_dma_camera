@@ -148,7 +148,7 @@ static void open_vpipe()
     // setup video for proper format
     struct v4l2_format v;
     int t;
-    v.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v.type = V4L2_BUF_TYPE_VBI_OUTPUT;
 
     /*
     struct v4l2_fmtdesc fmtdesc;
