@@ -378,8 +378,8 @@ static int get_dma_data(char* devicename,
 
 
     for (int j = 0; j < 16; j++)
-        printf("0x%02x", buffer[j])
-    printf("\r\n")
+        printf("0x%02x", buffer[j]);
+        printf("\r\n");
 
     close(fpga_fd);
     if (file_fd >= 0) {
