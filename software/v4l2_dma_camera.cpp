@@ -139,7 +139,7 @@ void sig_handler(int signum) {
 
 static void open_vpipe()
 {
-    v4l2sink = open(v4l2dev, O_WRONLY);
+    v4l2sink = open(v4l2dev, O_RDWR);
     printf("V4L2 sink opened\r\n");
     if (v4l2sink < 0) {
         fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
@@ -152,6 +152,13 @@ static void open_vpipe()
     t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
     if( t < 0 )
         exit(t);
+
+    struct v4l2_fmtdesc fmtdesc;
+    while (ioctl(v4l2sink, VIDIOC_ENUM_FMT, &fmtdesc) == 0)
+    {
+        printf("%s\n", fmtdesc.description);
+        fmtdesc.index++;
+    }
 
     printf("V4L2-get0 VIDIOC_G_FMT\r\n");
 
