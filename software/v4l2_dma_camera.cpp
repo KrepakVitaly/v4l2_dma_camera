@@ -35,8 +35,27 @@
 #include<unistd.h>
 
 
+#define ROUND_UP_2(num)  (((num)+1)&~1)
+#define ROUND_UP_4(num)  (((num)+3)&~3)
+#define ROUND_UP_8(num)  (((num)+7)&~7)
+#define ROUND_UP_16(num) (((num)+15)&~15)
+#define ROUND_UP_32(num) (((num)+31)&~31)
+#define ROUND_UP_64(num) (((num)+63)&~63)
+
+#if 1
+# define FRAME_WIDTH  640
+# define FRAME_HEIGHT 480
+#else
+# define FRAME_WIDTH  512
+# define FRAME_HEIGHT 512
+#endif
 
 
+#if 0
+# define FRAME_FORMAT V4L2_PIX_FMT_YUYV
+#else
+# define FRAME_FORMAT V4L2_PIX_FMT_YVU420
+#endif
 
 
 /* ltoh: little to host */
@@ -67,7 +86,7 @@
 //#define XDMA_FRAME_WIDTH 2064
 //#define XDMA_FRAME_HEIGHT 1544
 
-using namespace std;
+//using namespace std;
 
 /* Subtract timespec t2 from t1
  *
@@ -94,11 +113,12 @@ static void timespec_sub(struct timespec* t1, const struct timespec* t2)
 }
 
 static char const *v4l2dev = "/dev/video0";
+#define VIDEO_DEVICE "/dev/video0"
 //static char *spidev = NULL;
-static int v4l2sink = -1;
-static int width = 2064;    // 480;        //640;    //
-static int height = 1544;   // 320;        //480;    // 
-static int bpp = 2; //bytes per pixel
+static int fwdr = -1;
+static int width = 480; //2064;    // 480;        //640;    //
+static int height = 320; //1544;   // 320;        //480;    // 
+static int bpp = 4; //bytes per pixel
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 
@@ -120,8 +140,10 @@ static const struct option long_options[] = {
 };
 
 static void close_vpipe()
-{
-	close(v4l2sink);
+{ 
+	free(vidsendbuf);
+	printf("vidsendbuf freed\r\n");
+	close(fwdr);
 	printf("V4L2 sink closed\r\n");
 	return;
 }
@@ -136,19 +158,79 @@ void sig_handler(int signum) {
     exit(0);
 }
 
+void print_format(struct v4l2_format*vid_format) {
+  printf("      vid_format->type                =%d\n", vid_format->type );
+  printf("      vid_format->fmt.pix.width       =%d\n", vid_format->fmt.pix.width );
+  printf("      vid_format->fmt.pix.height      =%d\n", vid_format->fmt.pix.height );
+  printf("      vid_format->fmt.pix.pixelformat =%d\n", vid_format->fmt.pix.pixelformat);
+  printf("      vid_format->fmt.pix.sizeimage   =%d\n", vid_format->fmt.pix.sizeimage );
+  printf("      vid_format->fmt.pix.field       =%d\n", vid_format->fmt.pix.field );
+  printf("      vid_format->fmt.pix.bytesperline=%d\n", vid_format->fmt.pix.bytesperline );
+  printf("      vid_format->fmt.pix.colorspace  =%d\n", vid_format->fmt.pix.colorspace );
+}
+
+static int debug=0;
+
+
+int format_properties(const unsigned int format,
+                const unsigned int width,
+                const unsigned int height,
+                size_t*linewidth,
+                size_t*framewidth) {
+size_t lw, fw;
+        switch(format) {
+        case V4L2_PIX_FMT_YUV420: case V4L2_PIX_FMT_YVU420:
+                lw = width; /* ??? */
+                fw = ROUND_UP_4 (width) * ROUND_UP_2 (height);
+                fw += 2 * ((ROUND_UP_8 (width) / 2) * (ROUND_UP_2 (height) / 2));
+        break;
+        case V4L2_PIX_FMT_UYVY: case V4L2_PIX_FMT_Y41P: case V4L2_PIX_FMT_YUYV: case V4L2_PIX_FMT_YVYU:
+                lw = (ROUND_UP_2 (width) * 2);
+                fw = lw * height;
+        break;
+        default:
+                return 0;
+        }
+
+        if(linewidth)*linewidth=lw;
+        if(framewidth)*framewidth=fw;
+
+        return 1;
+}
+
 
 static void open_vpipe()
 {
-    v4l2sink = open(v4l2dev, O_RDWR);
+
+    struct v4l2_capability vid_caps;
+    struct v4l2_format vid_format;
+
+    size_t framesize = 0;
+    size_t linewidth = 0;
+
+
+//    __u8*buffer;
+//    __u8*check_buffer;
+
+    const char *video_device = VIDEO_DEVICE;
+    int fdwr = 0;
+    int ret_code = 0;
+
+    int i;
+
+    printf("using output device: %s\r\n", video_device);
+    
+    fdwr = open(video_device, O_RDWR);
+    assert(fdwr >= 0);
+
     printf("V4L2 sink opened\r\n");
-    if (v4l2sink < 0) {
+    if (fdwr < 0) {
         fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
         exit(-2);
     }
-    // setup video for proper format
-    struct v4l2_format v;
-    int t;
-    v.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+
+    ret_code = ioctl(fdwr, VIDIOC_QUERYCAP, &vid_caps);
+    assert(ret_code != -1);
 
     /*
     struct v4l2_fmtdesc fmtdesc;
@@ -158,62 +240,84 @@ static void open_vpipe()
     {
         printf("%s\n", fmtdesc.description);
         fmtdesc.index++;
-    }
-    */
-    t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
-    if( t < 0 )
-        exit(t);
+    }*/
 
+    memset(&vid_format, 0, sizeof(vid_format));
 
-
+    ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
+    
     printf("V4L2-get0 VIDIOC_G_FMT\r\n");
+    print_format(&vid_format);
 
-    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
-    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
-    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
-    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
-    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
-    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
+    if (ret_code < 0)
+    {
+	printf("Errcode %d\r\b", ret_code);
+	//exit(-2);
+    }
 
-    v.fmt.pix.width = width;
-    v.fmt.pix.height = height;
-    v.fmt.pix.pixelformat = V4L2_PIX_FMT_ARGB444;
-    vidsendsiz = width * height * bpp;
-    v.fmt.pix.sizeimage = vidsendsiz;
-    v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
-    v.fmt.pix.bytesperline = width * bpp;
+    vidsendsiz = width * height * 4;
 
-    printf("V4L2-set0 VIDIOC_G_FMT\r\n");
+    vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+    vid_format.fmt.pix.width = FRAME_WIDTH;
+    vid_format.fmt.pix.height = FRAME_HEIGHT;
+    vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
+    vid_format.fmt.pix.sizeimage = framesize;
+    vid_format.fmt.pix.field = V4L2_FIELD_NONE;
+    vid_format.fmt.pix.bytesperline = linewidth;
+    vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB;
+    
+    printf("V4L2-set0 VIDIOC_S_FMT\r\n");
+    print_format(&vid_format);
+    ret_code = ioctl(fdwr, VIDIOC_S_FMT, &vid_format);
+    assert(ret_code != -1);
 
-    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
-    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
-    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
-    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
-    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
-    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
+    printf("frame: format=%d\tsize=%lu\n", FRAME_FORMAT, framesize);
+    print_format(&vid_format);
 
-    t = ioctl(v4l2sink, VIDIOC_S_FMT, &v);
-    if( t < 0 )
-        exit(t);
+    
+    if(!format_properties(vid_format.fmt.pix.pixelformat,
+                        vid_format.fmt.pix.width, vid_format.fmt.pix.height,
+                        &linewidth,
+                        &framesize)) {
+                printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
+    }
+    vidsendbuf = (char*)malloc( sizeof(char)*framesize );
 
-    t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
-    if (t < 0)
-        exit(t);
-    printf("V4L2-get1 VIDIOC_G_FMT\r\n");
+    memset(vidsendbuf, 0, sizeof(char)*framesize);
+    //buffer=(__u8*)malloc(sizeof(__u8)*framesize);
+    //check_buffer=(__u8*)malloc(sizeof(__u8)*framesize);
 
-    printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
-    printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
-    printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
-    printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
-    printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
-    printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
-    printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
+    // setup video for proper format
+    //struct v4l2_format v;
+    //int t;
+    //v.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+    
+    //t = ioctl(v4l2sink, VIDIOC_G_FMT, &v);
+    //if( t < 0 )
+    //    exit(t);
+    //    i
+    pause();
+
+    //printf("V4L2-get0 VIDIOC_G_FMT\r\n");
+    //printf("V4L2 v.fmt.pix.width %d\r\n", v.fmt.pix.width);
+    //printf("V4L2 v.fmt.pix.height %d\r\n", v.fmt.pix.height);
+    //printf("V4L2 v.fmt.pix.pixelformat %d\r\n", v.fmt.pix.pixelformat);
+    //printf("V4L2 v.fmt.pix.sizeimage %d\r\n", v.fmt.pix.sizeimage);
+    //printf("V4L2 v.fmt.pix.colorspace %d\r\n", v.fmt.pix.colorspace);
+    //printf("V4L2 v.fmt.pix.bytesperline %d\r\n", v.fmt.pix.bytesperline);
+    //printf("V4L2 v.fmt.pix.field %d\r\n", v.fmt.pix.field);
+
+    //v.fmt.pix.width = width;
+    //v.fmt.pix.height = height;
+    //v.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
+    //vidsendsiz = width * heighti * 4;
+    //v.fmt.pix.sizeimage = vidsendsiz;
+    //v.fmt.pix.colorspace = V4L2_COLORSPACE_RAW;
+    //v.fmt.pix.bytesperline = width * bpp;
+
     //posix_memalign((void**)&allocated, 4096/*alignment*/, size + 4096);
-    //assert(allocated);
-    vidsendbuf = (char*)malloc( vidsendsiz );
-
+    //assert(allocated)
+    return ;
 }
 
 #define FATAL do { fprintf(stderr, "Error at line %d, file %s (%d) [%s]\n", __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
@@ -399,11 +503,11 @@ static int get_dma_data(char* devicename,
     /* display passed time, a bit less accurate but side-effects are accounted for */
     //printf("CLOCK_MONOTONIC reports %ld.%09ld seconds (total) for last transfer of %d bytes\n", ts_end.tv_sec, ts_end.tv_nsec, size);
 
-
+    /*
     for (int j = 0; j < 16; j++)
         printf("0x%02x", buffer[j]);
         printf("\r\n");
-
+*/
     close(fpga_fd);
     if (file_fd >= 0) {
         close(file_fd);
@@ -424,7 +528,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 
     if (pattern == 0)
     {
-        exposure_frame(XDMA_DEVICE_USER, 0x420, 1, 0x80);
+        exposure_frame(XDMA_DEVICE_USER, 0x42, 0, 0xff);
 
         get_dma_data(XDMA_DEVICE_NAME_DEFAULT, 
                      XDMA_FRAME_BASE_ADDR, 
@@ -455,7 +559,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-	write(v4l2sink, vidsendbuf, vidsendsiz);
+    write(fwdr, vidsendbuf, vidsendsiz);
 }
 
 void usage(char* exec)
@@ -474,6 +578,7 @@ int main(int argc, char **argv)
 {
     signal(SIGINT, sig_handler); // Register signal handler
     // processing command line parameters
+    /*
     for (;;) {
         int index;
         int c;
@@ -505,7 +610,7 @@ int main(int argc, char **argv)
             usage(argv[0]);
             exit(EXIT_FAILURE);
         }
-    }
+    }*/
 
 
     open_vpipe();
@@ -525,9 +630,12 @@ int main(int argc, char **argv)
     while(1)
     {
         //i++;
-	send_frame(0);
+	printf("Start Send frame");
+	//send_frame(0);
+	
 	usleep(41000);
-	//printf("Frame %d\r\n", i);
+	printf("Frame %d\r\n", i);
+	pause();
     }
     close_vpipe();
 
