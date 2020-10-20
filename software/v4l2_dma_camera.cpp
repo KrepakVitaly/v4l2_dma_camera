@@ -4,7 +4,7 @@
 #include <string.h>
 #include <fcntl.h>              
 #include <unistd.h>
-#include <signal.h>
+
 #include <errno.h>
 #include <time.h>
 #include <malloc.h>
@@ -30,6 +30,7 @@
 #include<unistd.h>
 */
 
+#include <signal.h>
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -157,10 +158,7 @@ static void open_vpipe()
     assert(fdwr >= 0);
 
     printf("V4L2 sink opened\r\n");
-    if (fdwr < 0) {
-        fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
-        exit(-2);
-    }
+
 
     ret_code = ioctl(fdwr, VIDIOC_QUERYCAP, &vid_caps);
     assert(ret_code != -1);
@@ -177,8 +175,6 @@ static void open_vpipe()
 	printf("Errcode %d\r\b", ret_code);
 	//exit(-2);
     }
-
-    vidsendsiz = width * height * 4;
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = FRAME_WIDTH;
