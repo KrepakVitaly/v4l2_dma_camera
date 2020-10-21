@@ -167,12 +167,12 @@ static void open_vpipe()
     memset(&vid_format, 0, sizeof(vid_format));
     printf("V4L2-get-0 VIDIOC_G_FMT\r\n");
     ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
-    if (ret_code < 0)
+    /*if (ret_code < 0)
     {
         printf("Errcode %d\r\b", ret_code);
         close_vpipe();
         exit(ret_code);
-    }
+    }*/
     print_format(&vid_format);
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
