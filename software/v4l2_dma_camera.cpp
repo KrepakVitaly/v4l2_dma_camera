@@ -55,7 +55,7 @@
 #define FRAME_WIDTH  2064
 #define FRAME_HEIGHT 1544
 
-#define FRAME_FORMAT V4L2_PIX_FMT_YVU420
+#define FRAME_FORMAT V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
 
 
 static int debug = 0;
@@ -202,7 +202,7 @@ static void open_vpipe()
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = FRAME_WIDTH;
     vid_format.fmt.pix.height = FRAME_HEIGHT;
-    vid_format.fmt.pix.pixelformat = FRAME_FORMAT; //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
+    vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.field = V4L2_FIELD_NONE;
     vid_format.fmt.pix.bytesperline = linewidth;
