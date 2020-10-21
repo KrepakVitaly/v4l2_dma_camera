@@ -434,6 +434,7 @@ int main(int argc, char **argv)
     {
         i++;
         printf("Start Send frame");
+        pause();
         send_frame(0);
 
         usleep(41000);
