@@ -1,18 +1,10 @@
 /*
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>              
-#include <unistd.h>
-
 #include <errno.h>
 #include <time.h>
 #include <malloc.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#include <sys/ioctl.h>
-#include <linux/videodev2.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <iostream>
@@ -20,16 +12,11 @@
 #include <ctime>
 #include <stdint.h>
 #include <getopt.h>
-#include <assert.h>
 #include <byteswap.h>
 #include <ctype.h>
 #include <termios.h>
 #include <sys/mman.h>
-#include<stdio.h>
-#include<signal.h>
-#include<unistd.h>
 */
-
 #include <signal.h>
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
@@ -39,7 +26,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <assert.h>
-
 
 #define ROUND_UP_2(num)  (((num)+1)&~1)
 #define ROUND_UP_4(num)  (((num)+3)&~3)
@@ -52,7 +38,6 @@
 # define CHECK_REREAD
 #endif
 
-#define VIDEO_DEVICE "/dev/video0"
 #if 1
 # define FRAME_WIDTH  640
 # define FRAME_HEIGHT 480
@@ -89,8 +74,8 @@ static void close_vpipe()
 	return;
 }
 
-void sig_handler(int signum) {
-
+void sig_handler(int signum) 
+{
     //Return type of the handler function should be void
     printf("\nInside handler function\n");
     close_vpipe();
@@ -139,14 +124,10 @@ int format_properties(const unsigned int format,
 
 static void open_vpipe()
 {
-    struct v4l2_capability vid_caps;
-    struct v4l2_format vid_format;
-
     size_t framesize = 0;
     size_t linewidth = 0;
 
-
-    const char *video_device = VIDEO_DEVICE;
+    const char * video_device = VIDEO_DEVICE;
     int fdwr = 0;
     int ret_code = 0;
 
@@ -157,24 +138,41 @@ static void open_vpipe()
     fdwr = open(video_device, O_RDWR);
     assert(fdwr >= 0);
 
-    printf("V4L2 sink opened\r\n");
+    printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", fdwr);
+    if (fdwr < 0) 
+    {
+        fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
+        close_vpipe();
+        exit(errno);
+    }
 
-
+    struct v4l2_capability vid_caps;
+    printf("V4L2-get VIDIOC_QUERYCAP\r\n");
     ret_code = ioctl(fdwr, VIDIOC_QUERYCAP, &vid_caps);
     assert(ret_code != -1);
 
+
+    struct v4l2_fmtdesc vid_fmtdesc;
+    memset(&vid_fmtdesc, 0, sizeof(vid_fmtdesc));
+    fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+    printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
+    while (ioctl(fdwr, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
+    {
+        printf("%s\n", fmtdesc.description);
+        fmtdesc.index++;
+    }
+
+    struct v4l2_format vid_format;
     memset(&vid_format, 0, sizeof(vid_format));
-
+    printf("V4L2-get-0 VIDIOC_G_FMT\r\n");
     ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
-    
-    printf("V4L2-get0 VIDIOC_G_FMT\r\n");
-    print_format(&vid_format);
-
     if (ret_code < 0)
     {
-	printf("Errcode %d\r\b", ret_code);
-	//exit(-2);
+        printf("Errcode %d\r\b", ret_code);
+        close_vpipe();
+        exit(ret_code);
     }
+    print_format(&vid_format);
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = FRAME_WIDTH;
@@ -185,8 +183,9 @@ static void open_vpipe()
     vid_format.fmt.pix.bytesperline = linewidth;
     vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB; //V4L2_COLORSPACE_RAW;
     
-    printf("V4L2-set0 VIDIOC_S_FMT\r\n");
+    printf("V4L2-set-0 VIDIOC_S_FMT\r\n");
     print_format(&vid_format);
+
     ret_code = ioctl(fdwr, VIDIOC_S_FMT, &vid_format);
     assert(ret_code != -1);
 
