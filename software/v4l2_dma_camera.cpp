@@ -164,7 +164,8 @@ static void open_vpipe()
     }
 
     struct v4l2_format vid_format;
-    //memset(&vid_format, 0, sizeof(vid_format));
+    memset(&vid_format, 0, sizeof(vid_format));
+    vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get-0 VIDIOC_G_FMT\r\n");
     ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
     if (ret_code < 0)
