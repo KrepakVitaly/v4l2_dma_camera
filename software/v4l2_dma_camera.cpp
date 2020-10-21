@@ -159,8 +159,8 @@ static void open_vpipe()
     printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
     while (ioctl(fdwr, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
     {
-        printf("%s\n", fmtdesc.description);
-        fmtdesc.index++;
+        printf("%s\n", vid_fmtdesc.description);
+        vid_fmtdesc.index++;
     }
 
     struct v4l2_format vid_format;
