@@ -1,22 +1,22 @@
 /*
-
-#include <time.h>
-#include <malloc.h>
-#include <sys/stat.h>
-
-
-#include <pthread.h>
-#include <semaphore.h>
 #include <iostream>
 #include <fstream>
 #include <ctime>
+*/
+
+#include <malloc.h>
+#include <sys/stat.h>
+
+#include <pthread.h>
+#include <semaphore.h>
 #include <stdint.h>
 #include <getopt.h>
 #include <byteswap.h>
 #include <ctype.h>
 #include <termios.h>
 #include <sys/mman.h>
-*/
+
+#include <time.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <errno.h>
