@@ -62,7 +62,7 @@ static int debug = 0;
 
 #define VIDEO_DEVICE "/dev/video0"
 
-static int fwdr = -1;
+static int fdwr = -1;
 static char * vidsendbuf = NULL;
 static int vidsendsiz = 0;
 __u8* buffer;
@@ -141,12 +141,13 @@ int format_properties(const unsigned int format,
 
 size_t framesize = 0;
 size_t linewidth = 0;
+
 static void open_vpipe()
 {
 
 
     const char * video_device = VIDEO_DEVICE;
-    int fdwr = 0;
+    //int fdwr = 0;
     int ret_code = 0;
 
     int i;
@@ -228,7 +229,7 @@ static void open_vpipe()
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize);
     vidsendbuf = (char*)malloc(sizeof(char) * framesize);
 
-    write(fdwr, buffer, framesize);
+    //write(fdwr, buffer, framesize);
 
     return ;
 }
@@ -394,7 +395,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
                      framesize, 0, 1,
-                    frame_buff);
+                     frame_buff);
     /*
     else
     {
@@ -419,7 +420,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-    write(fwdr, vidsendbuf, vidsendsiz);
+    write(fdwr, vidsendbuf, vidsendsiz);
 }
 
 int main(int argc, char **argv)
@@ -432,7 +433,7 @@ int main(int argc, char **argv)
     while (1)
     {
         i++;
-        //printf("Start Send frame");
+        printf("Start Send frame");
         send_frame(0);
 
         usleep(41000);
