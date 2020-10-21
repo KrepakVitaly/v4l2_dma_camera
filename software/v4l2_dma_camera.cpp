@@ -438,7 +438,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-    write(fdwr, vidsendbuf, vidsendsiz);
+    //write(fdwr, vidsendbuf, framesize);
 }
 
 int main(int argc, char **argv)
@@ -452,7 +452,6 @@ int main(int argc, char **argv)
     {
         i++;
         printf("Start Send frame");
-        pause();
         send_frame(0);
 
         usleep(41000);
