@@ -170,6 +170,11 @@ static void open_vpipe()
     if (ret_code < 0)
     {
         printf("VIDIOC_G_FMT Errcode %d\r\n", ret_code);
+
+        int err = errno;
+        fprintf(stderr, "%s\r\n",
+            explain_errno_ioctl(err, fdwr, VIDIOC_G_FMT, &vid_format));
+        //exit(EXIT_FAILURE);
         //close_vpipe();
         //exit(ret_code);
     }
