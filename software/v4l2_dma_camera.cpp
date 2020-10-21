@@ -52,8 +52,8 @@
 #endif
 
 
-#define FRAME_WIDTH  640
-#define FRAME_HEIGHT 480
+#define FRAME_WIDTH  2064
+#define FRAME_HEIGHT 1544
 
 #define FRAME_FORMAT V4L2_PIX_FMT_YVU420
 
@@ -433,7 +433,7 @@ int main(int argc, char **argv)
     {
         i++;
         printf("Start Send frame");
-        send_frame(0);
+        send_frame(1);
 
         usleep(41000);
         printf("Frame %d\r\n", i);
