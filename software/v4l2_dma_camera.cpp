@@ -139,11 +139,11 @@ int format_properties(const unsigned int format,
     return 1;
 }
 
-
+size_t framesize = 0;
+size_t linewidth = 0;
 static void open_vpipe()
 {
-    size_t framesize = 0;
-    size_t linewidth = 0;
+
 
     const char * video_device = VIDEO_DEVICE;
     int fdwr = 0;
