@@ -194,8 +194,8 @@ static void open_vpipe()
         //printf(stderr, "%s\r\n",
         //    explain_errno_ioctl(err, fdwr, VIDIOC_G_FMT, &vid_format));
         //exit(EXIT_FAILURE);
-        close_vpipe();
-        exit(EXIT_FAILURE);
+        //close_vpipe();
+        //exit(EXIT_FAILURE);
     }
     print_format(&vid_format);
 
@@ -224,6 +224,24 @@ static void open_vpipe()
                         &framesize)) {
                 printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
     }
+
+    memset(&vid_format, 0, sizeof(vid_format));
+    vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+    printf("V4L2-get-1 VIDIOC_G_FMT\r\n");
+    ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
+    if (ret_code < 0)
+    {
+        int err = errno;
+        printf("VIDIOC_G_FMT Errcode %d %d\r\n", ret_code, err);
+
+        //printf(stderr, "%s\r\n",
+        //    explain_errno_ioctl(err, fdwr, VIDIOC_G_FMT, &vid_format));
+        //exit(EXIT_FAILURE);
+        //close_vpipe();
+        //exit(EXIT_FAILURE);
+    }
+    print_format(&vid_format);
+
 
     buffer = (__u8*)malloc(sizeof(__u8) * framesize);
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize);
