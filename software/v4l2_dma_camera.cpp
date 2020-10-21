@@ -284,7 +284,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        //printf("pattern generator enabled\r\n");
+        printf("pattern generator enabled\r\n");
         fflush(stdout);
     }
     else
@@ -295,7 +295,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        //printf("pattern generator disabled\r\n");
+        printf("pattern generator disabled\r\n");
         fflush(stdout);
     }
 
@@ -329,7 +329,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        //printf("Digital ISO = %d \r\n", digital_iso);
+        printf("Digital ISO = %d \r\n", digital_iso);
         fflush(stdout);
 
     }
@@ -381,7 +381,7 @@ static int get_dma_data(char* devicename,
     int file_fd = -1;
     fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
     assert(fpga_fd >= 0);
-
+    printf("get_dma_data size == %d\r\n", size);
     while (count--) 
     {
         memset(buffer, 0x00, size);
