@@ -3,8 +3,8 @@
 #include <time.h>
 #include <malloc.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/time.h>
+
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <iostream>
@@ -17,6 +17,8 @@
 #include <termios.h>
 #include <sys/mman.h>
 */
+#include <sys/time.h>
+#include <sys/types.h>
 #include <errno.h>
 #include <signal.h>
 #include <linux/videodev2.h>
