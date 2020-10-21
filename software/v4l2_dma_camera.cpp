@@ -87,7 +87,7 @@ static void close_vpipe()
     free(buffer);
     free(check_buffer);
 	printf("vidsendbuf freed\r\n");
-	close(fwdr);
+	close(fdwr);
 	printf("V4L2 sink closed\r\n");
 	return;
 }
