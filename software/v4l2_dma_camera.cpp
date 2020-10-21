@@ -350,7 +350,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         read_result = *((uint32_t*)virt_addr);
         read_result = ltohl(read_result);
-        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     } while (read_result == 0);
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     fflush(stdout);
@@ -409,30 +409,11 @@ void get_frame(char* frame_buff, uint16_t pattern)
     uint16_t maxValue = 0;
 
     exposure_frame(XDMA_DEVICE_USER, 0x42, pattern, 0xff);
-
+    /*
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
                      framesize, 0, 1,
-                     frame_buff);
-    /*
-    else
-    {
-        for (int i = 0; i < FRAME_SIZE_UINT16; i++) {
-            if (i % PACKET_SIZE_UINT16 < 2) {
-                continue;
-            }
-            //(frameBuffer[i] - minValue) * scale;
-            //const int *colormap = colormap_ironblack;
-            column = (i % PACKET_SIZE_UINT16) - 2;
-            row = i / PACKET_SIZE_UINT16;
-
-            // Set video buffer pixel to scaled colormap value
-            int idx = row * width * 3 + column * 3;
-            frame_buff[idx + 0] = value++;
-            frame_buff[idx + 1] = value++;
-            frame_buff[idx + 2] = value++;
-        }
-    }*/
+                     frame_buff);*/
 }
 
 void send_frame(uint16_t pattern)
