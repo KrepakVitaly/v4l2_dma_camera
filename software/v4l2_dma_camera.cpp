@@ -267,7 +267,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     off_t target;
 
     if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
-    //printf("character device %s opened.\n", devicename);
+    printf("character device %s opened.\n", devicename);
     fflush(stdout);
 
     /* map one page */
@@ -310,7 +310,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
 
         exposure_time = (exposure_time * 2 * 0x1c8);
         float exp_time_sec = (float)exposure_time / 54000000;
-        //printf("Exposure time = %f seconds\r\n", exp_time_sec);
+        printf("Exposure time = %f seconds\r\n", exp_time_sec);
         fflush(stdout);
 
     }
@@ -331,7 +331,6 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
         printf("Digital ISO = %d \r\n", digital_iso);
         fflush(stdout);
-
     }
 
 
@@ -347,14 +346,14 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     //записал ли zynq кадр в память.
     do
     {
-        usleep(10000);
+        usleep(100);
         target = 0x4;
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         read_result = *((uint32_t*)virt_addr);
         read_result = ltohl(read_result);
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-    } while (0);// read_result == 0);
-    //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    } while (read_result == 0);
+    printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     fflush(stdout);
 
     // Его нужно сбросить в 0
