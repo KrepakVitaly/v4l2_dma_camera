@@ -1,5 +1,5 @@
 /*
-#include <errno.h>
+
 #include <time.h>
 #include <malloc.h>
 #include <sys/stat.h>
@@ -17,6 +17,7 @@
 #include <termios.h>
 #include <sys/mman.h>
 */
+#include <errno.h>
 #include <signal.h>
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
@@ -154,7 +155,7 @@ static void open_vpipe()
 
     struct v4l2_fmtdesc vid_fmtdesc;
     memset(&vid_fmtdesc, 0, sizeof(vid_fmtdesc));
-    fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
+    vid_fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
     while (ioctl(fdwr, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
     {
