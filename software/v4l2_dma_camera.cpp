@@ -35,23 +35,26 @@
 #define ROUND_UP_32(num) (((num)+31)&~31)
 #define ROUND_UP_64(num) (((num)+63)&~63)
 
-#if 0
-# define CHECK_REREAD
+/* ltoh: little to host */
+/* htol: little to host */
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#  define ltohl(x)       (x)
+#  define ltohs(x)       (x)
+#  define htoll(x)       (x)
+#  define htols(x)       (x)
+#elif __BYTE_ORDER == __BIG_ENDIAN
+#  define ltohl(x)     __bswap_32(x)
+#  define ltohs(x)     __bswap_16(x)
+#  define htoll(x)     __bswap_32(x)
+#  define htols(x)     __bswap_16(x)
 #endif
 
-#if 1
-# define FRAME_WIDTH  640
-# define FRAME_HEIGHT 480
-#else
-# define FRAME_WIDTH  512
-# define FRAME_HEIGHT 512
-#endif
 
-#if 0
-# define FRAME_FORMAT V4L2_PIX_FMT_YUYV
-#else
-# define FRAME_FORMAT V4L2_PIX_FMT_YVU420
-#endif
+#define FRAME_WIDTH  640
+#define FRAME_HEIGHT 480
+
+#define FRAME_FORMAT V4L2_PIX_FMT_YVU420
+
 
 static int debug = 0;
 
@@ -63,6 +66,18 @@ static int vidsendsiz = 0;
 __u8* buffer;
 __u8* check_buffer;
 
+int fd;
+int fpga_fd;
+
+#define PACKET_SIZE 164
+#define PACKET_SIZE_UINT16 (PACKET_SIZE/2)
+#define PACKETS_PER_FRAME 60
+#define FRAME_SIZE_UINT16 (PACKET_SIZE_UINT16*PACKETS_PER_FRAME)
+#define FPS 27
+
+#define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
+#define XDMA_DEVICE_USER  "/dev/xdma0_user"
+#define XDMA_FRAME_BASE_ADDR 0x200000
 
 static void close_vpipe()
 { 
@@ -176,8 +191,8 @@ static void open_vpipe()
         //printf(stderr, "%s\r\n",
         //    explain_errno_ioctl(err, fdwr, VIDIOC_G_FMT, &vid_format));
         //exit(EXIT_FAILURE);
-        //close_vpipe();
-        //exit(ret_code);
+        close_vpipe();
+        exit(EXIT_FAILURE);
     }
     print_format(&vid_format);
 
@@ -207,21 +222,220 @@ static void open_vpipe()
                 printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
     }
 
-    buffer=(__u8*)malloc(sizeof(__u8)*framesize);
-    check_buffer=(__u8*)malloc(sizeof(__u8)*framesize);
+    buffer = (__u8*)malloc(sizeof(__u8) * framesize);
+    check_buffer = (__u8*)malloc(sizeof(__u8) * framesize);
+    vidsendbuf = (char*)malloc(sizeof(char) * framesize);
 
     write(fdwr, buffer, framesize);
-    pause();
 
     return ;
 }
 
+
+#define FATAL do { fprintf(stderr, "Error at line %d, file %s (%d) [%s]\n", __LINE__, __FILE__, errno, strerror(errno)); exit(1); } while(0)
+
+#define MAP_SIZE (32*1024UL)
+#define MAP_MASK (MAP_SIZE - 1)
+
+static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern, int digital_iso)
+{
+    void* map_base, * virt_addr;
+    uint32_t read_result, writeval;
+    off_t target;
+
+    if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
+    //printf("character device %s opened.\n", devicename);
+    fflush(stdout);
+
+    /* map one page */
+    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (map_base == (void*)-1) FATAL;
+    //printf("Memory mapped at address %p.\n", map_base);
+    fflush(stdout);
+
+    if (pattern == 1)
+    {
+        target = 0x10; //включить паттер генератор,
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = 1;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        //printf("pattern generator enabled\r\n");
+        fflush(stdout);
+    }
+    else
+    {
+        target = 0x10; //выключить паттер генератор,
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = 0;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        //printf("pattern generator disabled\r\n");
+        fflush(stdout);
+    }
+
+    if (exposure_time >= 0x00000040 || exposure_time <= 0x00000920)
+    {
+        target = 0x20;
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = exposure_time;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+
+        exposure_time = (exposure_time * 2 * 0x1c8);
+        float exp_time_sec = (float)exposure_time / 54000000;
+        //printf("Exposure time = %f seconds\r\n", exp_time_sec);
+        fflush(stdout);
+
+    }
+    //0xf71f0020 регистр 32 бит, 0x00000040 Ц максимальное врем€ экспозиции(0, 0389 с),
+    //0x00000920 Ц минимальное врем€ экспозиции(0, 0005573 c).«начени€ вне этого интервала
+    //игнорируютс€.
+    //¬рем€ экспозиции = (0x941 Ц значение регистра) * (2 * 0x1c8) / 54000000 c
+    //0xf71f0030 регистр 32 бит, 0x00000000 Ц минимальное значение аналогового усилени€,
+    //0x000000ff Ц максимальное значение аналогового усилени€.«начени€ вне этого интервала
+    //игнорируютс€.
+    if (digital_iso >= 0x00000000 || digital_iso <= 0x000000ff)
+    {
+        target = 0x30;
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        writeval = digital_iso;
+        writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+        *((uint32_t*)virt_addr) = writeval;
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+        //printf("Digital ISO = %d \r\n", digital_iso);
+        fflush(stdout);
+
+    }
+
+
+    //записать 1 в регистр с адресом 0. — помощью этой команды драйвер дает команду zynq записать кадр с сенсора в zynq.
+    target = 0;
+    virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+    writeval = 1;
+    writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+    *((uint32_t*)virt_addr) = writeval;
+    //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    fflush(stdout);
+
+    //записал ли zynq кадр в пам€ть.
+    do
+    {
+        usleep(100);
+        target = 0x4;
+        virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+        read_result = *((uint32_t*)virt_addr);
+        read_result = ltohl(read_result);
+        //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    } while (read_result == 0);
+    //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    fflush(stdout);
+
+    // ≈го нужно сбросить в 0
+    target = 0x4;
+    virt_addr = map_base + target; /* calculate the virtual address to be accessed */
+    writeval = 0;
+    writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
+    *((uint32_t*)virt_addr) = writeval;
+    //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    fflush(stdout);
+
+
+    close(fd);
+    return 0;
+}
+
+
+static int get_dma_data(char* devicename,
+        uint32_t addr, uint32_t size, uint32_t offset, uint32_t count,
+        char* buffer)
+{
+    int rc;
+    char* filename = NULL;;
+    int file_fd = -1;
+    fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
+    assert(fpga_fd >= 0);
+
+    while (count--) 
+    {
+        memset(buffer, 0x00, size);
+        /* select AXI MM address */
+        off_t off = lseek(fpga_fd, addr, SEEK_SET);
+        /* read data from AXI MM into buffer using SGDMA */
+        rc = read(fpga_fd, buffer, size);
+        if ((rc > 0) && (rc < size)) {
+            printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
+        }
+    }
+
+    close(fpga_fd);
+    if (file_fd >= 0) {
+        close(file_fd);
+    }
+    return 0;
+}
+
+
+void get_frame(char* frame_buff, uint16_t pattern)
+{
+    int row, column;
+    uint16_t valuet = pattern;
+    uint16_t value = 0;
+    uint16_t minValue = 65535;
+    uint16_t maxValue = 0;
+
+    exposure_frame(XDMA_DEVICE_USER, 0x42, pattern, 0xff);
+
+    get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
+                    XDMA_FRAME_BASE_ADDR,
+                     framesize, 0, 1,
+                    frame_buff);
+    /*
+    else
+    {
+        for (int i = 0; i < FRAME_SIZE_UINT16; i++) {
+            if (i % PACKET_SIZE_UINT16 < 2) {
+                continue;
+            }
+            //(frameBuffer[i] - minValue) * scale;
+            //const int *colormap = colormap_ironblack;
+            column = (i % PACKET_SIZE_UINT16) - 2;
+            row = i / PACKET_SIZE_UINT16;
+
+            // Set video buffer pixel to scaled colormap value
+            int idx = row * width * 3 + column * 3;
+            frame_buff[idx + 0] = value++;
+            frame_buff[idx + 1] = value++;
+            frame_buff[idx + 2] = value++;
+        }
+    }*/
+}
+
+void send_frame(uint16_t pattern)
+{
+    get_frame(vidsendbuf, pattern);
+    write(fwdr, vidsendbuf, vidsendsiz);
+}
 
 int main(int argc, char **argv)
 {
     signal(SIGINT, sig_handler); // Register signal handler
 
     open_vpipe();
+
+    uint16_t i = 0;
+    while (1)
+    {
+        i++;
+        //printf("Start Send frame");
+        send_frame(0);
+
+        usleep(41000);
+        printf("Frame %d\r\n", i);
+    }
 
     close_vpipe();
 
