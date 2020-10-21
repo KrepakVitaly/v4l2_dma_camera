@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <linux/videodev2.h>
+#include <libexplain/ioctl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <stdio.h>
