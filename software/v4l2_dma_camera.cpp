@@ -52,13 +52,13 @@
 #endif
 
 
-#define FRAME_WIDTH  2064
+#define FRAME_WIDTH  4128
 #define FRAME_HEIGHT 1544
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
-size_t linewidth = 0;
+size_t linewidth = FRAME_WIDTH;
 
-#define FRAME_FORMAT V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
+#define FRAME_FORMAT V4L2_PIX_FMT_GREY  // V4L2_PIX_FMT_SRGGB12  //V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
 
 
 static int debug = 0;
@@ -267,14 +267,14 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     off_t target;
 
     if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
-    printf("character device %s opened.\n", devicename);
-    fflush(stdout);
+    //printf("character device %s opened.\n", devicename);
+    //fflush(stdout);
 
     /* map one page */
     map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (map_base == (void*)-1) FATAL;
     //printf("Memory mapped at address %p.\n", map_base);
-    fflush(stdout);
+    //fflush(stdout);
 
     if (pattern == 1)
     {
@@ -284,8 +284,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("pattern generator enabled\r\n");
-        fflush(stdout);
+        //printf("pattern generator enabled\r\n");
+        //fflush(stdout);
     }
     else
     {
@@ -295,8 +295,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("pattern generator disabled\r\n");
-        fflush(stdout);
+        //printf("pattern generator disabled\r\n");
+        //fflush(stdout);
     }
 
     if (exposure_time >= 0x00000040 || exposure_time <= 0x00000920)
@@ -310,8 +310,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
 
         exposure_time = (exposure_time * 2 * 0x1c8);
         float exp_time_sec = (float)exposure_time / 54000000;
-        printf("Exposure time = %f seconds\r\n", exp_time_sec);
-        fflush(stdout);
+        //printf("Exposure time = %f seconds\r\n", exp_time_sec);
+        //fflush(stdout);
 
     }
     //0xf71f0020 регистр 32 бит, 0x00000040 Ц максимальное врем€ экспозиции(0, 0389 с),
@@ -329,8 +329,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
         *((uint32_t*)virt_addr) = writeval;
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-        printf("Digital ISO = %d \r\n", digital_iso);
-        fflush(stdout);
+        //printf("Digital ISO = %d \r\n", digital_iso);
+        //fflush(stdout);
     }
 
 
@@ -341,7 +341,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
     *((uint32_t*)virt_addr) = writeval;
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-    fflush(stdout);
+    //fflush(stdout);
 
     //записал ли zynq кадр в пам€ть.
     do
@@ -353,8 +353,8 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
         read_result = ltohl(read_result);
         //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     } while (read_result == 0);
-    printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-    fflush(stdout);
+    //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
+    //fflush(stdout);
 
     // ≈го нужно сбросить в 0
     target = 0x4;
@@ -363,7 +363,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
     *((uint32_t*)virt_addr) = writeval;
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
-    fflush(stdout);
+    //fflush(stdout);
 
 
     close(fd);
@@ -380,7 +380,7 @@ static int get_dma_data(char* devicename,
     int file_fd = -1;
     fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
     assert(fpga_fd >= 0);
-    printf("get_dma_data size == %d\r\n", size);
+    //printf("get_dma_data size == %d\r\n", size);
     while (count--) 
     {
         memset(buffer, 0x00, size);
@@ -409,7 +409,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
     uint16_t minValue = 65535;
     uint16_t maxValue = 0;
 
-    exposure_frame(XDMA_DEVICE_USER, 0x42, pattern, 0xff);
+    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
     
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
@@ -434,7 +434,7 @@ int main(int argc, char **argv)
     {
         i++;
         printf("Start Send frame");
-        send_frame(1);
+        send_frame(0);
 
         usleep(41000);
         printf("Frame %d\r\n", i);
