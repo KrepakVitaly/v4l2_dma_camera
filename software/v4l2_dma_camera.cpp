@@ -365,7 +365,7 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     //fflush(stdout);
 
-
+    if (munmap(map_base, MAP_SIZE) == -1) FATAL;
     close(fd);
     return 0;
 }
@@ -376,7 +376,6 @@ static int get_dma_data(char* devicename,
         char* buffer)
 {
     int rc;
-    char* filename = NULL;;
     int file_fd = -1;
     fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
     assert(fpga_fd >= 0);
