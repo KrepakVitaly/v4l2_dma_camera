@@ -436,7 +436,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-    write(fdwr, real_video, real_width*real_width);
+    write(fdwr, real_video, 3190784);
 }
 
 int main(int argc, char **argv)
