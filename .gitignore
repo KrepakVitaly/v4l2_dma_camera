@@ -2,7 +2,8 @@
 *.flv
 *.mp4
 *.bin
-
+.vs/*
+*/.vs/*
 *.o.d
 
 software/v4l2_dma_camera
