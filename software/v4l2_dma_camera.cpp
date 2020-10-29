@@ -425,7 +425,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
     uint16_t minValue = 65535;
     uint16_t maxValue = 0;
 
-    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0xff);
+    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0xfa);
     
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
