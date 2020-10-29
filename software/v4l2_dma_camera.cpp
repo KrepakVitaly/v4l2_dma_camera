@@ -406,8 +406,8 @@ static int get_dma_data(char* devicename,
 
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
-            real_video[raw*real_width + col] = (uint8_t)( (((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 4) +
-                                                          (((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
+            real_video[raw*real_width + col] = (uint8_t)( (((uint16_t)buffer[raw * real_width + col * 2 + 1]) >> 4) +
+                                                          (((uint16_t)buffer[raw * real_width + col * 2 + 0]) << 4)  );
 
     close(fpga_fd);
     if (file_fd >= 0) {
@@ -425,7 +425,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
     uint16_t minValue = 65535;
     uint16_t maxValue = 0;
 
-    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
+    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0xff);
     
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
