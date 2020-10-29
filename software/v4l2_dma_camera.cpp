@@ -253,7 +253,7 @@ static void open_vpipe()
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize*2);
     vidsendbuf = (char*)malloc(sizeof(char) * framesize*2);
 
-    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
+    real_video = (char*)malloc(sizeof(char) * real_width * real_height * 2);
     //write(fdwr, buffer, framesize);
 
     return ;
@@ -406,8 +406,8 @@ static int get_dma_data(char* devicename,
 
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
-            real_video[raw*real_width + col] = (uint8_t)( (((uint16_t)buffer[raw * real_width + col + 1]) << 4) + 
-                                                          (((uint16_t)buffer[raw * real_width + col + 0]) >> 4)  );
+            real_video[raw*real_width + col] = (uint8_t)( (((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 4) +
+                                                          (((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
 
     close(fpga_fd);
     if (file_fd >= 0) {
@@ -436,7 +436,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-    write(fdwr, real_video, real_width* real_width);
+    write(fdwr, real_video, real_width*real_width);
 }
 
 int main(int argc, char **argv)
