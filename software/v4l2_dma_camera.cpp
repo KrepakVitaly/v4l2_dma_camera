@@ -253,7 +253,7 @@ static void open_vpipe()
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize*2);
     vidsendbuf = (char*)malloc(sizeof(char) * framesize*2);
 
-    real_video = (__u8*)malloc(sizeof(__u8) * real_width * real_height);
+    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
     //write(fdwr, buffer, framesize);
 
     return ;
