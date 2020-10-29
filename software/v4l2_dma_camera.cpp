@@ -52,8 +52,8 @@
 #endif
 
 
-#define FRAME_WIDTH  2064
-#define FRAME_HEIGHT 1544
+#define FRAME_WIDTH  2048
+#define FRAME_HEIGHT 1558
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
@@ -436,7 +436,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(vidsendbuf, pattern);
-    write(fdwr, real_video, 3190784);
+    write(fdwr, real_video, real_width*real_width);
 }
 
 int main(int argc, char **argv)
