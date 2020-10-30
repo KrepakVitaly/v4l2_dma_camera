@@ -52,8 +52,8 @@
 #endif
 
 
-#define FRAME_WIDTH  2048
-#define FRAME_HEIGHT 1558
+#define FRAME_WIDTH  2064
+#define FRAME_HEIGHT 1554
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
@@ -145,13 +145,11 @@ int format_properties(const unsigned int format,
 }
 
 
-int real_width = 2064;
-int real_height = 1544;
+int real_width = FRAME_WIDTH;
+int real_height = FRAME_HEIGHT;
 
 static void open_vpipe()
 {
-
-
     const char * video_device = VIDEO_DEVICE;
     //int fdwr = 0;
     int ret_code = 0;
@@ -401,13 +399,10 @@ static int get_dma_data(char* devicename,
 
 
     //reodrder data for 8 bit rggb
-
-
-
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
-            real_video[raw*real_width + col] = (uint8_t)( (((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 4) +
-                                                          (((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
+            real_video[raw * real_width + col] = (uint8_t)((((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 0));// +
+                                                          //(((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
 
     close(fpga_fd);
     if (file_fd >= 0) {
