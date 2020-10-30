@@ -52,20 +52,24 @@
 #endif
 
 
-#define FRAME_WIDTH  2064
-#define FRAME_HEIGHT 1554
+#define FRAME_WIDTH  2048
+#define FRAME_HEIGHT 1558
+
+#define XDMA_FRAME_WIDTH  2064
+#define XDMA_FRAME_HEIGHT 1554
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
 
 #define FRAME_FORMAT V4L2_PIX_FMT_SBGGR8 // V4L2_PIX_FMT_SRGGB12 //V4L2_PIX_FMT_BGR32  // V4L2_PIX_FMT_SRGGB12  //V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
 
-
 static int debug = 0;
 
 #define VIDEO_DEVICE "/dev/video0"
 
 static int fdwr = -1;
+
+static char* fpga_frame_buf = NULL;
 static char * vidsendbuf = NULL;
 static char* real_video = NULL;
 static int vidsendsiz = 0;
@@ -91,6 +95,7 @@ static void close_vpipe()
     free(buffer);
     free(check_buffer);
     free(real_video);
+    free(fpga_frame_buf);
 	printf("vidsendbuf freed\r\n");
 	close(fdwr);
 	printf("V4L2 sink closed\r\n");
@@ -250,8 +255,8 @@ static void open_vpipe()
     buffer = (__u8*)malloc(sizeof(__u8) * framesize*2);
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize*2);
     vidsendbuf = (char*)malloc(sizeof(char) * framesize*2);
-
-    real_video = (char*)malloc(sizeof(char) * real_width * real_height * 2);
+    fpga_frame_buf = (char*)malloc(sizeof(char) * XDMA_FRAME_HEIGHT * XDMA_FRAME_WIDTH * 2);
+    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
     //write(fdwr, buffer, framesize);
 
     return ;
@@ -373,9 +378,6 @@ static int exposure_frame(char* devicename, uint16_t exposure_time, int pattern,
     return 0;
 }
 
-
-
-
 static int get_dma_data(char* devicename,
         uint32_t addr, uint32_t size, uint32_t offset, uint32_t count,
         char* buffer)
@@ -397,12 +399,11 @@ static int get_dma_data(char* devicename,
         }
     }
 
-
     //reodrder data for 8 bit rggb
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
             real_video[col * real_height + raw] = buffer[col * real_height + raw * 2 + 0];
-    
+  /*
     for (int col = 0; col < 10; col++)
         for (int raw = 0; raw < 2; raw++)
         {
@@ -414,7 +415,7 @@ static int get_dma_data(char* devicename,
     for (int i = 0; i < 16; i++)
     {
         printf("buffer[%d] %02x \r\n", i, buffer[i]);
-    }
+    }*/
 
     close(fpga_fd);
     if (file_fd >= 0) {
@@ -436,13 +437,13 @@ void get_frame(char* frame_buff, uint16_t pattern)
     
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
-                     framesize*2, 0, 1,
+                     XDMA_FRAME_HEIGHT*XDMA_FRAME_WIDTH, 0, 1,
                      frame_buff);
 }
 
 void send_frame(uint16_t pattern)
 {
-    get_frame(vidsendbuf, pattern);
+    get_frame(fpga_frame_buf, pattern);
     write(fdwr, real_video, real_width*real_width);
 }
 
