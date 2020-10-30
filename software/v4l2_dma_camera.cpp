@@ -417,14 +417,17 @@ static int get_dma_data(char* devicename,
     for (int raw = 0; raw < real_height; raw++)
         for (int col = 0; col < real_width; col++)
         {
-            if ( (raw * XDMA_FRAME_HEIGHT + col * 2 + 1) >= XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT * 2)
+            if ((raw * XDMA_FRAME_HEIGHT * 2 + col * 2 + 1) >= XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT * 2)
+            {
+                real_video[raw * real_width + col] = 0x66;
                 continue;
-
+            }
+                
             pix_12bit_0 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 0];
             pix_12bit_1 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 1];
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
-            pix_8bit = pix_12bit >> 4;
-            real_video[col * real_height + raw] = pix_8bit;
+            pix_8bit = uint8_t(pix_12bit >> 2);
+            real_video[raw * real_width + col] = pix_8bit;
             if (0)
             {
                 printf("------\r\n", pix_12bit);
