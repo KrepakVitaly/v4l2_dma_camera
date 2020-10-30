@@ -52,8 +52,8 @@
 #endif
 
 
-#define FRAME_WIDTH  2064
-#define FRAME_HEIGHT 1554
+#define FRAME_WIDTH  2048
+#define FRAME_HEIGHT 1558
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
@@ -401,8 +401,8 @@ static int get_dma_data(char* devicename,
     //reodrder data for 8 bit rggb
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
-            real_video[raw * real_width + col] = (uint8_t)((((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 0));// +
-                                                          //(((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
+            real_video[raw * real_width + col] = (uint8_t)((((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 4) +
+                                                          (((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
 
     close(fpga_fd);
     if (file_fd >= 0) {
@@ -420,7 +420,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
     uint16_t minValue = 65535;
     uint16_t maxValue = 0;
 
-    exposure_frame(XDMA_DEVICE_USER, 0x920, pattern, 0x80);
+    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
     
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
                     XDMA_FRAME_BASE_ADDR,
