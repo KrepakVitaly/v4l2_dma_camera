@@ -58,7 +58,7 @@
 #define XDMA_FRAME_WIDTH  2064
 #define XDMA_FRAME_HEIGHT 1554
 
-size_t framesize = FRAME_WIDTH * FRAME_HEIGHT * 2;
+size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
 
 #define FRAME_FORMAT V4L2_PIX_FMT_SBGGR12 // V4L2_PIX_FMT_SRGGB12 //V4L2_PIX_FMT_BGR32  // V4L2_PIX_FMT_SRGGB12  //V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
@@ -479,7 +479,7 @@ void get_frame(char* frame_buff, uint16_t pattern)
 void send_frame(uint16_t pattern)
 {
     get_frame(fpga_frame_buf, pattern);
-    write(fdwr, real_video, real_width*real_width);
+    write(fdwr, real_video, real_width*real_width*2);
 }
 
 int main(int argc, char **argv)
