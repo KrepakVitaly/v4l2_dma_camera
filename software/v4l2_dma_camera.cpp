@@ -415,10 +415,14 @@ static int get_dma_data(char* devicename,
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = pix_12bit >> 4;
             real_video[col * real_height + raw] = pix_8bit;
-            printf("pix_12bit 0h%02x", pix_12bit);
-            printf("pix_8bit 0h%02x", pix_8bit);
-            printf("pix_12bit_0 0h%02x", pix_12bit_0);
-            printf("pix_12bit_1 0h%02x", pix_12bit_1);
+            if (col < 2 && raw < 5)
+            {
+            printf("------\r\n", pix_12bit);
+            printf("pix_12bit 0h%02x\r\n", pix_12bit);
+            printf("pix_8bit 0h%02x\r\n", pix_8bit);
+            printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
+            printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
+            }
         }
              
   /*
