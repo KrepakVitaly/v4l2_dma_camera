@@ -402,14 +402,14 @@ static int get_dma_data(char* devicename,
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
             real_video[raw * real_width + col] = buffer[raw * real_width + col * 2 + 0];
-
+    /*
     for (int col = 0; col < 5; col++)
         for (int raw = 0; raw < 2; raw++)
         {
             printf("(uint16_t)buffer[%d * real_width + %d * 2 + 0] %02x \r\n", raw, col, buffer[raw * real_width + col * 2 + 0]);
             printf("(uint16_t)buffer[%d * real_width + %d * 2 + 1] %02x \r\n", raw, col, buffer[raw * real_width + col * 2 + 1]);
             printf(" real_video[%d * real_width + %d]     %02x  \r\n", raw, col, real_video[raw * real_width + col]);
-        }
+        }*/
     close(fpga_fd);
     if (file_fd >= 0) {
         close(file_fd);
