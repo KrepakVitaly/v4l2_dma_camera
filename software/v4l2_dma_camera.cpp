@@ -52,8 +52,8 @@
 #endif
 
 
-#define FRAME_WIDTH  2048
-#define FRAME_HEIGHT 1558
+#define FRAME_WIDTH  2064
+#define FRAME_HEIGHT 1554
 
 size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
 size_t linewidth = FRAME_WIDTH;
@@ -406,10 +406,16 @@ static int get_dma_data(char* devicename,
     for (int col = 0; col < 10; col++)
         for (int raw = 0; raw < 2; raw++)
         {
-            printf("(uint16_t)buffer[%d * real_height + %d * 2 + 0] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 0]);
-            printf("(uint16_t)buffer[%d * real_height + %d * 2 + 1] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 1]);
-            printf(" real_video[%d * real_width + %d]     %02x  \r\n", col, raw, real_video[col * real_height + raw]);
+            printf("buffer[%d * real_height + %d * 2 + 0] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 0]);
+            printf("buffer[%d * real_height + %d * 2 + 1] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 1]);
+            printf("real_video[%d * real_width + %d]     %02x  \r\n", col, raw, real_video[col * real_height + raw]);
         }
+
+    for (int i = 0; i < 16; i++)
+    {
+        printf("buffer[%d] %02x \r\n", i, buffer[i]);
+    }
+
     close(fpga_fd);
     if (file_fd >= 0) {
         close(file_fd);
