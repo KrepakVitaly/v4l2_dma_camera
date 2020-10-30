@@ -401,8 +401,7 @@ static int get_dma_data(char* devicename,
     //reodrder data for 8 bit rggb
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
-            real_video[raw * real_width + col] = (uint8_t)((((uint16_t)buffer[raw * real_width + col * 2 + 1]) << 0) );// +
-                                                          //(((uint16_t)buffer[raw * real_width + col * 2 + 0]) >> 4)  );
+            real_video[raw * real_width + col] = buffer[raw * real_width + col * 2 + 0];
 
     for (int col = 0; col < 5; col++)
         for (int raw = 0; raw < 2; raw++)
