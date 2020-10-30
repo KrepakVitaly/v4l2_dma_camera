@@ -426,7 +426,7 @@ static int get_dma_data(char* devicename,
             pix_12bit_0 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 0];
             pix_12bit_1 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 1];
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
-            pix_8bit = uint8_t(pix_12bit >> 2);
+            pix_8bit = uint8_t(pix_12bit >> 4);
             real_video[raw * real_width + col] = pix_8bit;
             if (0)
             {
