@@ -407,21 +407,32 @@ static int get_dma_data(char* devicename,
 
     uint8_t pix_8bit = 0;
 
+    /*
+#define FRAME_WIDTH  2048
+#define FRAME_HEIGHT 1558
+
+#define XDMA_FRAME_WIDTH  2064
+#define XDMA_FRAME_HEIGHT 1554*/
+
+
     for (int col = 0; col < real_width; col++)
         for (int raw = 0; raw < real_height; raw++)
         {
-            pix_12bit_0 = buffer[col * real_height + raw * 2 + 0];
-            pix_12bit_1 = buffer[col * real_height + raw * 2 + 1];
+            if (col * XDMA_FRAME_HEIGHT + raw * 2 + 1 >= XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT)
+                continue;
+
+            pix_12bit_0 = buffer[col * XDMA_FRAME_HEIGHT + raw * 2 + 0];
+            pix_12bit_1 = buffer[col * XDMA_FRAME_HEIGHT + raw * 2 + 1];
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = pix_12bit >> 4;
             real_video[col * real_height + raw] = pix_8bit;
-            if (pix_12bit_1 > 1)
+            if (0)
             {
-            printf("------\r\n", pix_12bit);
-            printf("pix_12bit 0h%02x\r\n", pix_12bit);
-            printf("pix_8bit 0h%02x\r\n", pix_8bit);
-            printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
-            printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
+                printf("------\r\n", pix_12bit);
+                printf("pix_12bit 0h%02x\r\n", pix_12bit);
+                printf("pix_8bit 0h%02x\r\n", pix_8bit);
+                printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
+                printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
             }
         }
              
