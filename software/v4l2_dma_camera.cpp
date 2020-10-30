@@ -58,7 +58,7 @@
 #define XDMA_FRAME_WIDTH  2064
 #define XDMA_FRAME_HEIGHT 1554
 
-size_t framesize = FRAME_WIDTH * FRAME_HEIGHT;
+size_t framesize = FRAME_WIDTH * FRAME_HEIGHT * 2;
 size_t linewidth = FRAME_WIDTH;
 
 #define FRAME_FORMAT V4L2_PIX_FMT_SBGGR12 // V4L2_PIX_FMT_SRGGB12 //V4L2_PIX_FMT_BGR32  // V4L2_PIX_FMT_SRGGB12  //V4L2_PIX_FMT_GREY //V4L2_PIX_FMT_YVU420  //V4L2_PIX_FMT_BGR32;//V4L2_PIX_FMT_GREY;//V4L2_PIX_FMT_SRGGB12;
@@ -256,8 +256,7 @@ static void open_vpipe()
     check_buffer = (__u8*)malloc(sizeof(__u8) * framesize*2);
     vidsendbuf = (char*)malloc(sizeof(char) * framesize*2);
     fpga_frame_buf = (char*)malloc(sizeof(char) * XDMA_FRAME_HEIGHT * XDMA_FRAME_WIDTH * 2);
-    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
-    //write(fdwr, buffer, framesize);
+    real_video = (char*)malloc(sizeof(char) * real_width * real_height * 2);
 
     return ;
 }
@@ -426,8 +425,9 @@ static int get_dma_data(char* devicename,
             pix_12bit_0 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 0];
             pix_12bit_1 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 1];
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
-            pix_8bit = uint8_t(pix_12bit >> 4);
-            real_video[raw * real_width + col] = pix_8bit;
+
+            real_video[raw * real_width * 2 + col + 0] * 2 = pix_12bit_0;
+            real_video[raw * real_width * 2 + col + 1] * 2 = pix_12bit_1;
             if (0)
             {
                 printf("------\r\n", pix_12bit);
