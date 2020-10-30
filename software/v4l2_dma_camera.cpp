@@ -415,7 +415,7 @@ static int get_dma_data(char* devicename,
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = pix_12bit >> 4;
             real_video[col * real_height + raw] = pix_8bit;
-            if (col < 2 && raw < 5)
+            if (pix_12bit_1 > 1)
             {
             printf("------\r\n", pix_12bit);
             printf("pix_12bit 0h%02x\r\n", pix_12bit);
