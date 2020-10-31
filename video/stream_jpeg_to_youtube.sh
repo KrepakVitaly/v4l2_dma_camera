@@ -5,7 +5,7 @@
 # Configurer youtube avec une résolution 720p. La vidéo n'est pas scalée.
 
 VBR="2500k"                                    # Bitrate de la vidéo en sortie
-FPS="30"                                       # FPS de la vidéo en sortie
+FPS="15"                                       # FPS de la vidéo en sortie
 QUAL="medium"                                  # Preset de qualité FFMPEG
 YOUTUBE_URL="rtmp://a.rtmp.youtube.com/live2"  # URL de base RTMP youtube
 
@@ -17,7 +17,7 @@ ffmpeg  -re \
     -thread_queue_size 512 \
     -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 \
     -f v4l2 -i /dev/video0  -framerate $FPS \
-    -tune stillimage -tune zerolatency -s 1280x720 \
+    -tune stillimage -tune zerolatency -s 1920x1080 \
     -vcodec libx264 -bf 2 -preset $QUAL -r $FPS -g $(($FPS * 2)) -b:v $VBR \
     -f flv "$YOUTUBE_URL/$KEY"
 

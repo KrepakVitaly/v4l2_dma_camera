@@ -12,7 +12,7 @@ YOUTUBE_URL="rtmp://a.rtmp.youtube.com/live2"  # URL de base RTMP youtube
 SOURCE="udp://239.255.139.0:1234"              # Source UDP (voir les annonces SAP)
 KEY="qqws-psbp-3abp-6v5t-29e8"                 # Clé à récupérer sur l'event youtube
 
-ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -loop 1 -y  -i test.jpg  -f flv "$YOUTUBE_URL/$KEY"
+ffmpeg -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 -f v4l2  -i /dev/video0  -f flv "$YOUTUBE_URL/$KEY"
 
 #ffmpeg -r 25 -f v4l2 -i /dev/video0 -framerate $FPS -tune zerolatency -s 640x480  \
 #     -c:v libx264 -b:v 2500k -f flv "$YOUTUBE_URL/$KEY"
