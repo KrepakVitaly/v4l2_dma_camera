@@ -215,7 +215,7 @@ static void open_vpipe()
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.field = V4L2_FIELD_NONE;
     vid_format.fmt.pix.bytesperline = linewidth;
-    vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB; //V4L2_COLORSPACE_RAW;
+    vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_RAW; //V4L2_COLORSPACE_RAW;
     
     printf("V4L2-set-0 VIDIOC_S_FMT\r\n");
     print_format(&vid_format);
