@@ -49,11 +49,8 @@ void open_vpipe()
     {
         int err = errno;
         printf("VIDIOC_G_FMT Errcode %d %d\r\n", ret_code, err);
-
-        //printf(stderr, "%s\r\n",
-        //    explain_errno_ioctl(err, fdwr, VIDIOC_G_FMT, &vid_format));
-        //close_vpipe();
-        //exit(EXIT_FAILURE);
+        //TODO free resources
+        exit(EXIT_FAILURE);
     }
     print_format(&vid_format);
 
