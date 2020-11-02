@@ -91,7 +91,7 @@ void open_vpipe()
     }
     print_format(&vid_format);
 
-    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize * 2);
+    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize * 4);
 
     return;
 }

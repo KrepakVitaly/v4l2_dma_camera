@@ -10,7 +10,7 @@ int real_height = XDMA_FRAME_WIDTH;
 
 char* real_video = NULL;
 
-void get_dma_frame(char* buffer, uint32_t size, uint16_t pattern)
+void get_dma_frame(uint8_t* buffer, uint32_t size, uint16_t pattern)
 {
     //TODO add program generated pattern
     get_dma_data(XDMA_FRAME_BASE_ADDR,
