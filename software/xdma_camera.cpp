@@ -20,7 +20,7 @@ void get_dma_frame(uint8_t* buffer, uint32_t size, uint16_t pattern)
 
 int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset, 
     uint32_t count,
-    char* buffer)
+    uint8_t* buffer)
 {
     unsigned int rc;
 
