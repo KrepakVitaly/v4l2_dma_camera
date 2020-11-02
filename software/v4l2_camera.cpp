@@ -145,6 +145,7 @@ int format_properties(const unsigned int format,
 
 void close_vpipe()
 {
+    free(vidsendbuf);
     printf("vidsendbuf freed\r\n");
     close(v4l2_fd_dev);
     printf("V4L2 sink closed\r\n");

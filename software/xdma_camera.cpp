@@ -10,12 +10,12 @@ int real_height = XDMA_FRAME_WIDTH;
 
 char* real_video = NULL;
 
-void get_dma_frame(char* frame_buff, uint32_t size, uint16_t pattern)
+void get_dma_frame(char* buffer, uint32_t size, uint16_t pattern)
 {
     //TODO add program generated pattern
     get_dma_data(XDMA_FRAME_BASE_ADDR,
         size, 0, 1,
-        frame_buff);
+        buffer);
 }
 
 int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset, 
@@ -34,6 +34,7 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
         if ((rc > 0) && (rc < size)) {
             printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
         }
+        printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
     }
     //reodrder data for 8 bit rggb
     uint16_t pix_12bit_0 = 0;
@@ -57,7 +58,7 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = uint8_t(pix_12bit >> 4);
             real_video[raw * real_width + col] = pix_8bit;
-            if (XDMA_CAM_DEBUG == 3)
+            //if (XDMA_CAM_DEBUG == 3)
             {
                 printf("------\r\n");
                 printf("pix_12bit 0h%02x\r\n", pix_12bit);

@@ -83,7 +83,7 @@ int main(int argc, char** argv)
         printf("Start exposure_frame\r\n");
         exposure_frame();
         printf("Start get_dma_frame\r\n");
-        get_dma_frame((char*)vidsendbuf, framesize, 0);
+        get_dma_frame((char*)vidsendbuf, real_width*real_height*2, 0);
         printf("Start write v4l2_fd_dev\r\n");
         write(v4l2_fd_dev, real_video, real_width * real_height);
 
