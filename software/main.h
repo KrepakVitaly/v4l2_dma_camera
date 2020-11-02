@@ -23,13 +23,13 @@ void usage(char* exec)
     printf("Usage: %s [options]\n"
         "Options:\n"
         "  -h | --help                Print this message\n"
-        "  -v | --video devname       name of v4l2loopback device\n",
-        "  -f | --pix_fmt val         name of v4l2loopback pixel format\n",
+        "  -v | --video devname       name of v4l2loopback device\n"
+        "  -f | --pix_fmt val         name of v4l2loopback pixel format\n"
         "  -x | --xdma_dma devname    name of XDMA c2h device\n"
         "  -r | --xdma_user devname   name of XDMA user registers device\n"
-        "  -e | --exp  val            Value of exposure time of xdma camera 0x40-0x920\n",
-        "  -i | --dig_iso val         Value of digital amplifying 0x00-0xff\n",
-        "  -p | --pattern val         Using of pattern generator, 1 - enable, 0 - disable \n",
+        "  -e | --exp  val            Value of exposure time of xdma camera 0x40-0x920\n"
+        "  -i | --dig_iso val         Value of digital amplifying 0x00-0xff\n"
+        "  -p | --pattern val         Using of pattern generator, 1 - enable, 0 - disable \n"
         "  -l | --loglevel val        verbose debug level from 0 to 3 \n",
         exec);
 }

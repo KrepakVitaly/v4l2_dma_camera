@@ -131,7 +131,7 @@ int format_properties(const unsigned int format,
         fw = lw * height;
         break;
     case V4L2_PIX_FMT_SBGGR8: case V4L2_PIX_FMT_SGBRG8: case V4L2_PIX_FMT_SGRBG8: case V4L2_PIX_FMT_SRGGB8:
-        lw = width;
+        lw = ROUND_UP_2(width);
         fw = lw * height;
         break;
     case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12:
@@ -142,8 +142,8 @@ int format_properties(const unsigned int format,
         return 0;
     }
 
-    if (linewidth)*linewidth = lw;
-    if (framewidth)*framewidth = fw;
+    if (linewidth) *linewidth = lw;
+    if (framewidth) *framewidth = fw;
 
     return 1;
 }
