@@ -1,13 +1,13 @@
 #include <v4l2_camera.h>
 
 int v4l2_fd_dev = 0;
+static uint8_t* vidsendbuf = NULL;
+
 
 static void open_vpipe()
 {
     const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;
-
-    int i;
 
     printf("using output device: %s\r\n", video_device);
 
@@ -97,11 +97,7 @@ static void open_vpipe()
     }
     print_format(&vid_format);
 
-    buffer = (__u8*)malloc(sizeof(__u8) * framesize * 2);
-    check_buffer = (__u8*)malloc(sizeof(__u8) * framesize * 2);
-    vidsendbuf = (char*)malloc(sizeof(char) * framesize * 2);
-    fpga_frame_buf = (char*)malloc(sizeof(char) * XDMA_FRAME_HEIGHT * XDMA_FRAME_WIDTH * 2);
-    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
+    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize * 2);
 
     return;
 }
@@ -132,6 +128,14 @@ int format_properties(const unsigned int format,
         fw += 2 * ((ROUND_UP_8(width) / 2) * (ROUND_UP_2(height) / 2));
         break;
     case V4L2_PIX_FMT_UYVY: case V4L2_PIX_FMT_Y41P: case V4L2_PIX_FMT_YUYV: case V4L2_PIX_FMT_YVYU:
+        lw = (ROUND_UP_2(width) * 2);
+        fw = lw * height;
+        break;
+    case V4L2_PIX_FMT_SBGGR8: case V4L2_PIX_FMT_SGBRG8: case V4L2_PIX_FMT_SGRBG8: case V4L2_PIX_FMT_SRGGB8:
+        lw = width;
+        fw = lw * height;
+        break;
+    case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12:
         lw = (ROUND_UP_2(width) * 2);
         fw = lw * height;
         break;
