@@ -1,19 +1,20 @@
 #include <v4l2_camera.h>
 
+int v4l2_fd_dev = 0;
 
 static void open_vpipe()
 {
-    const char* video_device = VIDEO_DEVICE;
+    const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;
 
     int i;
 
     printf("using output device: %s\r\n", video_device);
 
-    fdwr = open(video_device, O_RDWR);
+    v4l2_fd_dev = open(video_device, O_RDWR);
     assert(fdwr >= 0);
 
-    printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", fdwr);
+    printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", v4l2_fd_dev);
     if (fdwr < 0)
     {
         fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
@@ -23,7 +24,7 @@ static void open_vpipe()
 
     struct v4l2_capability vid_caps;
     printf("V4L2-get VIDIOC_QUERYCAP\r\n");
-    ret_code = ioctl(fdwr, VIDIOC_QUERYCAP, &vid_caps);
+    ret_code = ioctl(v4l2_fd_dev, VIDIOC_QUERYCAP, &vid_caps);
     assert(ret_code != -1);
 
 
@@ -31,7 +32,7 @@ static void open_vpipe()
     memset(&vid_fmtdesc, 0, sizeof(vid_fmtdesc));
     vid_fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
-    while (ioctl(fdwr, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
+    while (ioctl(v4l2_fd_dev, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
     {
         printf("%s\n", vid_fmtdesc.description);
         vid_fmtdesc.index++;
@@ -41,7 +42,7 @@ static void open_vpipe()
     memset(&vid_format, 0, sizeof(vid_format));
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get-0 VIDIOC_G_FMT\r\n");
-    ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
+    ret_code = ioctl(v4l2_fd_dev, VIDIOC_G_FMT, &vid_format);
     if (ret_code < 0)
     {
         int err = errno;
@@ -66,7 +67,7 @@ static void open_vpipe()
     printf("V4L2-set-0 VIDIOC_S_FMT\r\n");
     print_format(&vid_format);
 
-    ret_code = ioctl(fdwr, VIDIOC_S_FMT, &vid_format);
+    ret_code = ioctl(v4l2_fd_dev, VIDIOC_S_FMT, &vid_format);
     assert(ret_code != -1);
 
     printf("frame: format=%d\tsize=%lu\n", FRAME_FORMAT, framesize);
@@ -83,7 +84,7 @@ static void open_vpipe()
     memset(&vid_format, 0, sizeof(vid_format));
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get-1 VIDIOC_G_FMT\r\n");
-    ret_code = ioctl(fdwr, VIDIOC_G_FMT, &vid_format);
+    ret_code = ioctl(v4l2_fd_dev, VIDIOC_G_FMT, &vid_format);
     if (ret_code < 0)
     {
         int err = errno;

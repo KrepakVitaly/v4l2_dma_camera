@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     }
 
     //open_vpipe();
+    //init_dma_camera();
 
     uint16_t i = 0;
     while (1)

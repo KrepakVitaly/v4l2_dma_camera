@@ -1,6 +1,16 @@
 #ifndef V2L4_CAMERA_H
 #define V2L4_CAMERA_H
 
+#include <stdio.h>
+#include <stdint.h>
+#include <unistd.h>
+#include <assert.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <linux/videodev2.h>
+#include <malloc.h>
+
 #define V4L2_FRAME_WIDTH  2048
 #define V4L2_FRAME_HEIGHT 1558
 
