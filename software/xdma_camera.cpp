@@ -28,7 +28,7 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
     {
         //memset(buffer, 0x00, size);
         /* select AXI MM address */
-        off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
+        //off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
         /* read data from AXI MM into buffer using SGDMA */
         rc = read(fpga_fd_c2h, buffer, size);
         if ((rc > 0) && (rc < size)) {
@@ -89,10 +89,8 @@ int set_camera_settings(uint16_t exposure_time,
     int digital_iso)
 {
     void* virt_addr;
-    uint32_t read_result, writeval;
+    uint32_t writeval;
     off_t target;
-
-
 
     if (pattern == 1)
     {
@@ -215,7 +213,7 @@ int init_dma_camera(char* devicename)
 
     set_camera_settings(0x40, 0, 0x80);
 
-    real_video = (uint8_t*)malloc(sizeof(uint8_t) * real_width * real_height);
+    real_video = (char*)malloc(sizeof(char) * real_width * real_height);
     
     return 0;
 }
