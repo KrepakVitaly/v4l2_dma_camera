@@ -24,7 +24,12 @@
 #define XDMA_DEVICE_USER  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
 
-void get_dma_frame(char* frame_buff, uint16_t pattern);
+#define XDMA_FRAME_WIDTH  2064
+#define XDMA_FRAME_HEIGHT 1554
 
+void get_dma_frame(char* , uint16_t);
+static int exposure_frame(char*);
+static int init_dma_camera(char*);
+static int set_camera_settings(char* , uint16_t , int , int)
 
 #endif // XDMA_CAMERA_H
