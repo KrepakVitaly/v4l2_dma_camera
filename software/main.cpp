@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdint.h>
+
+#include <sys/time.h>
 
 #include "xdma_camera.h"
 #include "v4l2_camera.h"
