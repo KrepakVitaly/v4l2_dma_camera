@@ -3,8 +3,8 @@
 int fpga_fd_c2h;
 int fpga_fd_user;
 
-int real_width = FRAME_WIDTH;
-int real_height = FRAME_HEIGHT;
+int real_width = XDMA_FRAME_WIDTH;
+int real_height = XDMA_FRAME_WIDTH;
 
 static char* real_video = NULL;
 
@@ -204,7 +204,7 @@ static int set_camera_settings(char* devicename,
     if (munmap(map_base, MAP_SIZE) == -1) FATAL;
     close(fpga_fd_user);
     return 0;
-}
+}    
 
 
 static int exposure_frame(char* devicename)
