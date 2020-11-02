@@ -15,7 +15,7 @@ static void open_vpipe()
     assert(v4l2_fd_dev >= 0);
 
     printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", v4l2_fd_dev);
-    if (fdwr < 0)
+    if (v4l2_fd_dev < 0)
     {
         fprintf(stderr, "Failed to open v4l2sink device. (%s)\n", strerror(errno));
         close_vpipe();
