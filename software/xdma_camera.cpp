@@ -1,5 +1,6 @@
 #include <xdma_camera.h>
 
+
 int fpga_fd;
 
 void get_dma_frame(char* frame_buff, uint16_t pattern)

@@ -1,7 +1,7 @@
 #ifndef XDMA_CAMERA_H
 #define XDMA_CAMERA_H
 
-
+#include <stdint.h>
 
 /* ltoh: little to host */
 /* htol: little to host */
