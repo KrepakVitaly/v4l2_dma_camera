@@ -22,7 +22,7 @@ xdma_camera.o: xdma_camera.h xdma_camera.cpp
 	${CXX} -c ${CXXFLAGS} ${INCPATH} -o xdma_camera.o xdma_camera.cpp
 
 refactored_camera: main.o xdma_camera.o v4l2_camera.o tools.o
-	${CXX} -o main main.o xdma_camera.o v4l2_camera.o tools.cpp ${CXXFLAGS}
+	${CXX} -o main main.o xdma_camera.o v4l2_camera.o tools.o ${CXXFLAGS}
 
 clean:
 	rm -f v4l2_dma_camera.o v4l2_dma_camera main main.o xdma_camera xdma_camera.o v4l2_camera v4l2_camera.o tools tools.o
