@@ -5,13 +5,10 @@ int fpga_fd;
 
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
-    int row, column;
+    //TODO add program generated pattern
     uint16_t valuet = pattern;
-    uint16_t value = 0;
-    uint16_t minValue = 65535;
-    uint16_t maxValue = 0;
 
-    exposure_frame(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
+    set_camera_settings(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
 
     get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
         XDMA_FRAME_BASE_ADDR,

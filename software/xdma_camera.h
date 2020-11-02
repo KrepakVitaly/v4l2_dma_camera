@@ -2,6 +2,9 @@
 #define XDMA_CAMERA_H
 
 #include <stdint.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /* ltoh: little to host */
 /* htol: little to host */
@@ -27,9 +30,12 @@
 #define XDMA_FRAME_WIDTH  2064
 #define XDMA_FRAME_HEIGHT 1554
 
+extern int fpga_fd;
+
 void get_dma_frame(char* , uint16_t);
 static int exposure_frame(char*);
 static int init_dma_camera(char*);
-static int set_camera_settings(char* , uint16_t , int , int)
+static int set_camera_settings(char*, uint16_t, int, int);
+static int get_dma_data(char*, uint32_t, uint32_t, uint32_t, uint32_t, char*);
 
 #endif // XDMA_CAMERA_H
