@@ -1,7 +1,11 @@
 #include <stdlib.h>
-#include <xdma_camera.h>
-#include <v4l2_camera.h>
-#include <main.h>
+#include <signal.h>
+#include <stdio.h>
+
+#include "xdma_camera.h"
+#include "v4l2_camera.h"
+#include "main.h"
+#include "tools.h"
 
 void sig_handler(int signum);
 
