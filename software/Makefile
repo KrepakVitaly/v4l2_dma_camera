@@ -12,8 +12,18 @@ all: v4l2_dma_camera
 v4l2_dma_camera: v4l2_dma_camera.o
 	${CXX} -o v4l2_dma_camera v4l2_dma_camera.cpp ${CXXFLAGS}
 
-refactored_camera: main.o
-	${CXX} -o main main.cpp ${CXXFLAGS}
+
+tools.o: tools.h tools.cpp
+    ${CXX} -c ${CXXFLAGS} ${INCPATH} -o tools.o tools.cpp
+
+v4l2_camera.o: v4l2_camera.h v4l2_camera.cpp
+    ${CXX} -c ${CXXFLAGS} ${INCPATH} -o v4l2_camera.o v4l2_camera.cpp
+
+xdma_camera.o: xdma_camera.h xdma_camera.cpp
+    ${CXX} -c ${CXXFLAGS} ${INCPATH} -o xdma_camera.o xdma_camera.cpp
+
+refactored_camera: main.o xdma_camera.o v4l2_camera.o tools.o
+	${CXX} -o main leptsci.o xdma_camera.o v4l2_camera.o tools.cpp ${CXXFLAGS}
 
 clean:
-	rm -f v4l2_dma_camera.o v4l2_dma_camera
+	rm -f v4l2_dma_camera.o v4l2_dma_camera main main.o xdma_camera xdma_camera.o v4l2_camera v4l2_camera.o tools tools.o

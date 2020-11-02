@@ -1,8 +1,6 @@
 #include <v4l2_camera.h>
 
 
-
-
 static void open_vpipe()
 {
     const char* video_device = VIDEO_DEVICE;

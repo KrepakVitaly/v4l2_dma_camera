@@ -1,3 +1,6 @@
+#ifndef V2L4_CAMERA_H
+#define V2L4_CAMERA_H
+
 #define V4L2_FRAME_WIDTH  2048
 #define V4L2_FRAME_HEIGHT 1558
 
@@ -13,3 +16,5 @@
 
 void print_format(struct v4l2_format* vid_format);
 
+
+#endif // V2L4_CAMERA_H

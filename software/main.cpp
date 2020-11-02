@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <getopt.h>
 
 #include <sys/time.h>
 
@@ -16,6 +17,16 @@ int main(int argc, char** argv)
 {
     // TODO check kill -9
     signal(SIGINT, sig_handler); // Register signal handler
+
+    // processing command line parameters
+    for (int index;;)
+    {
+        int retc = 0;
+        retc = getopt_long(argc, argv, short_options, long_options, &index);
+
+        if (-1 == c)
+            break;
+    }
 
     //open_vpipe();
 

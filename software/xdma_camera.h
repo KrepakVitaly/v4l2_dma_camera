@@ -1,3 +1,5 @@
+#ifndef XDMA_CAMERA_H
+#define XDMA_CAMERA_H
 
 
 
@@ -23,3 +25,6 @@
 #define XDMA_FRAME_BASE_ADDR 0x200000
 
 void get_dma_frame(char* frame_buff, uint16_t pattern);
+
+
+#endif // XDMA_CAMERA_H
