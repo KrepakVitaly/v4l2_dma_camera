@@ -23,10 +23,10 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
     uint8_t* buffer)
 {
     unsigned int rc;
-
+    assert(fpga_fd_c2h >= 0);
     while (count--)
     {
-        //memset(buffer, 0x00, size);
+        memset(buffer, 0x00, size);
         /* select AXI MM address */
         off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
         /* read data from AXI MM into buffer using SGDMA */
