@@ -9,6 +9,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <sys/mman.h>
+
+#include "tools.h"
 
 /* ltoh: little to host */
 /* htol: little to host */
@@ -23,6 +26,8 @@
 #  define htoll(x)     __bswap_32(x)
 #  define htols(x)     __bswap_16(x)
 #endif
+
+
 
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
