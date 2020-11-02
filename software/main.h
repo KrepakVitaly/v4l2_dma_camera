@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define DEBUG_LEVEL 0
+
 
 static const char short_options[] = "d:hv:";
 

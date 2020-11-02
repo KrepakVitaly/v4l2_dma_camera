@@ -27,8 +27,8 @@ int main(int argc, char** argv)
             break;
     }
 
-    //open_vpipe();
-    //init_dma_camera();
+    open_vpipe();
+    init_dma_camera();
 
     uint16_t i = 0;
     while (1)
@@ -38,7 +38,8 @@ int main(int argc, char** argv)
         //send_frame(0);
 
         usleep(41000);
-        printf("Frame %d\r\n", i);
+        if (DEBUG_LEVEL == 1)
+            printf("Frame %d\r\n", i);
     }
 
     //close_vpipe();
@@ -51,6 +52,7 @@ void sig_handler(int signum)
     // TODO check kill -9
     //Return type of the handler function should be void
     printf("\nInside handler function signum %d\n", signum);
-    //close_vpipe();
+    close_vpipe();
+    deinit_dma_camera();
     exit(0);
 }
