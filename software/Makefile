@@ -12,5 +12,8 @@ all: v4l2_dma_camera
 v4l2_dma_camera: v4l2_dma_camera.o
 	${CXX} -o v4l2_dma_camera v4l2_dma_camera.cpp ${CXXFLAGS}
 
+refactored_camera: main.o
+	${CXX} -o main main.cpp ${CXXFLAGS}
+
 clean:
 	rm -f v4l2_dma_camera.o v4l2_dma_camera
