@@ -213,7 +213,7 @@ int init_dma_camera(char* devicename)
     printf("Memory mapped at address %p.\n", map_base);
     fflush(stdout);
 
-    set_camera_settings(0x40, pattern, 0x80);
+    set_camera_settings(0x40, 0, 0x80);
     
     return 0;
 }
