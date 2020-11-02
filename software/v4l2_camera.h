@@ -26,9 +26,6 @@
 #define DEFAULT_VIDEO_DEVICE "/dev/video0"
 #define FRAME_FORMAT V4L2_PIX_FMT_SGRBG8
 
-size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
-size_t linewidth = V4L2_FRAME_WIDTH;
-
 extern int v4l2_fd_dev;
 
 static void open_vpipe();
