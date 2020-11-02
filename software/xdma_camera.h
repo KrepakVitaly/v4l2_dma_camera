@@ -52,6 +52,6 @@ int exposure_frame();
 int init_dma_camera(char* devicename);
 int deinit_dma_camera();
 int set_camera_settings(uint16_t, int, int);
-int get_dma_data(uint32_t, uint32_t, uint32_t, uint32_t, char*);
+int get_dma_data(uint32_t, uint32_t, uint32_t, uint32_t, uint8_t*);
 
 #endif // XDMA_CAMERA_H
