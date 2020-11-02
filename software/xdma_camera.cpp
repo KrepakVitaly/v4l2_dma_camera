@@ -3,6 +3,11 @@
 int fpga_fd_c2h;
 int fpga_fd_user;
 
+int real_width = FRAME_WIDTH;
+int real_height = FRAME_HEIGHT;
+
+static char* real_video = NULL;
+
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
     //TODO add program generated pattern
@@ -60,7 +65,7 @@ static int get_dma_data(char* devicename,
             real_video[raw * real_width + col] = pix_8bit;
             if (0)
             {
-                printf("------\r\n", pix_12bit);
+                printf("------\r\n");
                 printf("pix_12bit 0h%02x\r\n", pix_12bit);
                 printf("pix_8bit 0h%02x\r\n", pix_8bit);
                 printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
@@ -82,9 +87,8 @@ static int get_dma_data(char* devicename,
           printf("buffer[%d] %02x \r\n", i, buffer[i]);
       }*/
 
-    close(fpga_fd_c2h);
-    if (file_fd >= 0) {
-        close(file_fd);
+    if (fpga_fd_c2h >= 0) {
+        close(fpga_fd_c2h);
     }
     return 0;
 }
@@ -98,7 +102,7 @@ static int set_camera_settings(char* devicename,
     uint32_t read_result, writeval;
     off_t target;
 
-    if ((fd = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
+    if ((fpga_fd_user = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
     //printf("character device %s opened.\n", devicename);
     //fflush(stdout);
 
