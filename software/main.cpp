@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <getopt.h>
-
-#include <sys/time.h>
+#include <unistd.h>
 
 #include "xdma_camera.h"
 #include "v4l2_camera.h"
@@ -24,7 +23,7 @@ int main(int argc, char** argv)
         int retc = 0;
         retc = getopt_long(argc, argv, short_options, long_options, &index);
 
-        if (-1 == c)
+        if (retc == -1)
             break;
     }
 
