@@ -27,7 +27,7 @@
 #define FRAME_FORMAT V4L2_PIX_FMT_SGRBG8
 
 extern int v4l2_fd_dev;
-extern uint8_t* vidsendbuf = NULL;
+extern uint8_t* vidsendbuf;
 
 void open_vpipe();
 void print_format(struct v4l2_format* );

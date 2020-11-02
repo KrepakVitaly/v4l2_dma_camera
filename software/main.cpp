@@ -82,9 +82,10 @@ int main(int argc, char** argv)
         i++;
         printf("Start exposure_frame\r\n");
         exposure_frame();
-        printf("Start exposure_frame\r\n");
-        get_dma_frame( , 0);
-        write(v4l2_fd_dev, vidsendbuf, real_width * real_height);
+        printf("Start get_dma_frame\r\n");
+        get_dma_frame(vidsendbuf, 0);
+        printf("Start write v4l2_fd_dev\r\n");
+        write(v4l2_fd_dev, real_video, real_width * real_height);
 
         usleep(41000);
         if (DEBUG_LEVEL == 1)
