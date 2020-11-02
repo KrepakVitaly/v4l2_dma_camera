@@ -1,6 +1,7 @@
 #include <xdma_camera.h>
 
-int fpga_fd;
+int fpga_fd_c2h;
+int fpga_fd_user;
 
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
@@ -20,17 +21,16 @@ static int get_dma_data(char* devicename,
     char* buffer)
 {
     int rc;
-    int file_fd = -1;
-    fpga_fd = open(devicename, O_RDWR | O_NONBLOCK);
-    assert(fpga_fd >= 0);
+    fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK);
+    assert(fpga_fd_c2h >= 0);
     //printf("get_dma_data size == %d\r\n", size);
     while (count--)
     {
         memset(buffer, 0x00, size);
         /* select AXI MM address */
-        off_t off = lseek(fpga_fd, addr, SEEK_SET);
+        off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
         /* read data from AXI MM into buffer using SGDMA */
-        rc = read(fpga_fd, buffer, size);
+        rc = read(fpga_fd_c2h, buffer, size);
         if ((rc > 0) && (rc < size)) {
             printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
         }
@@ -82,7 +82,7 @@ static int get_dma_data(char* devicename,
           printf("buffer[%d] %02x \r\n", i, buffer[i]);
       }*/
 
-    close(fpga_fd);
+    close(fpga_fd_c2h);
     if (file_fd >= 0) {
         close(file_fd);
     }
@@ -103,7 +103,7 @@ static int set_camera_settings(char* devicename,
     //fflush(stdout);
 
     /* map one page */
-    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fpga_fd_user, 0);
     if (map_base == (void*)-1) FATAL;
     //printf("Memory mapped at address %p.\n", map_base);
     //fflush(stdout);
@@ -198,17 +198,23 @@ static int set_camera_settings(char* devicename,
     //fflush(stdout);
 
     if (munmap(map_base, MAP_SIZE) == -1) FATAL;
-    close(fd);
+    close(fpga_fd_user);
     return 0;
 }
 
 
 static int exposure_frame(char* devicename)
 {
-
+    
 }
 
 static int init_dma_camera(char* devicename)
 {
+    //open devices
+}
 
+
+static int deinit_dma_camera(char* devicename)
+{
+    //open devices
 }

@@ -27,8 +27,6 @@
 #  define htols(x)     __bswap_16(x)
 #endif
 
-
-
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
 
@@ -39,7 +37,9 @@
 #define XDMA_FRAME_WIDTH  2064
 #define XDMA_FRAME_HEIGHT 1554
 
-extern int fpga_fd;
+extern int fpga_fd_c2h;
+extern int fpga_fd_user;
+
 
 void get_dma_frame(char* , uint16_t);
 static int exposure_frame(char*);
