@@ -28,9 +28,9 @@
 
 extern int v4l2_fd_dev;
 
-static void open_vpipe();
+void open_vpipe();
 void print_format(struct v4l2_format* );
 int format_properties(const unsigned int, const unsigned int, const unsigned int, size_t*, size_t*);
-static void close_vpipe();
+void close_vpipe();
 
 #endif // V2L4_CAMERA_H

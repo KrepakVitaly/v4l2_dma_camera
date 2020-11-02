@@ -44,10 +44,10 @@ extern int fpga_fd_user;
 
 
 void get_dma_frame(char* , uint16_t);
-static int exposure_frame();
-static int init_dma_camera();
-static int deinit_dma_camera();
-static int set_camera_settings(char*, uint16_t, int, int);
-static int get_dma_data(char*, uint32_t, uint32_t, uint32_t, uint32_t, char*);
+int exposure_frame();
+int init_dma_camera();
+int deinit_dma_camera();
+int set_camera_settings(char*, uint16_t, int, int);
+int get_dma_data(char*, uint32_t, uint32_t, uint32_t, uint32_t, char*);
 
 #endif // XDMA_CAMERA_H

@@ -6,7 +6,7 @@ static uint8_t* vidsendbuf = NULL;
 size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
 size_t linewidth = V4L2_FRAME_WIDTH;
 
-static void open_vpipe()
+void open_vpipe()
 {
     const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;
@@ -151,7 +151,7 @@ int format_properties(const unsigned int format,
     return 1;
 }
 
-static void close_vpipe()
+void close_vpipe()
 {
     printf("vidsendbuf freed\r\n");
     close(v4l2_fd_dev);

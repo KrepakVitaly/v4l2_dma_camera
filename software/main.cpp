@@ -25,6 +25,26 @@ int main(int argc, char** argv)
 
         if (retc == -1)
             break;
+
+        switch (retc) {
+        case 0:
+            break;
+
+        case 'd':
+            break;
+
+        case 'h':
+            usage(argv[0]);
+            exit(EXIT_SUCCESS);
+
+        case 'v':
+            break;
+
+        default:
+            usage(argv[0]);
+            exit(EXIT_FAILURE);
+        }
+
     }
 
     open_vpipe();

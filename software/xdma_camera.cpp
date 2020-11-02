@@ -20,7 +20,7 @@ void get_dma_frame(char* frame_buff, uint16_t pattern)
         frame_buff);
 }
 
-static int get_dma_data(char* devicename,
+int get_dma_data(char* devicename,
     uint32_t addr, uint32_t size, uint32_t offset, 
     uint32_t count,
     char* buffer)
@@ -93,7 +93,7 @@ static int get_dma_data(char* devicename,
     return 0;
 }
 
-static int set_camera_settings(char* devicename, 
+int set_camera_settings(char* devicename, 
     uint16_t exposure_time,
     int pattern, 
     int digital_iso)
@@ -208,19 +208,19 @@ static int set_camera_settings(char* devicename,
 }    
 
 
-static int exposure_frame()
+int exposure_frame()
 {
     return 0;
 }
 
-static int init_dma_camera()
+int init_dma_camera()
 {
     //open devices
     return 0;
 }
 
 
-static int deinit_dma_camera()
+int deinit_dma_camera()
 {
     //open devices
     return 0;
