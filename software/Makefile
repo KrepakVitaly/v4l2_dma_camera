@@ -18,7 +18,7 @@ v4l2_camera.o: v4l2_camera.h v4l2_camera.cpp
 xdma_camera.o: xdma_camera.h xdma_camera.cpp
 	${CXX} -c ${CXXFLAGS} ${INCPATH} -o xdma_camera.o xdma_camera.cpp
 
-v4l2_dma_camera: xdma_camera.o v4l2_camera.o tools.o
+v4l2_dma_camera: main.o xdma_camera.o v4l2_camera.o tools.o
 	${CXX} -o v4l2_dma_camera main.o xdma_camera.o v4l2_camera.o tools.o ${CXXFLAGS}
 
 clean:
