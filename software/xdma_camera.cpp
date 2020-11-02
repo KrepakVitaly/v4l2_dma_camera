@@ -8,7 +8,7 @@ void* map_base;
 int real_width = XDMA_FRAME_WIDTH;
 int real_height = XDMA_FRAME_WIDTH;
 
-static char* real_video = NULL;
+char* real_video = NULL;
 
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
@@ -214,6 +214,8 @@ int init_dma_camera(char* devicename)
     fflush(stdout);
 
     set_camera_settings(0x40, 0, 0x80);
+
+    real_video = (uint8_t*)malloc(sizeof(uint8_t) * real_width * real_height);
     
     return 0;
 }
@@ -228,6 +230,8 @@ int deinit_dma_camera()
     if (fpga_fd_c2h >= 0) {
         close(fpga_fd_c2h);
     }
+
+    free(real_video);
 
     return 0;
 }

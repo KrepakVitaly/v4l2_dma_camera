@@ -1,7 +1,7 @@
 #include <v4l2_camera.h>
 
 int v4l2_fd_dev = 0;
-static uint8_t* vidsendbuf = NULL;
+uint8_t* vidsendbuf = NULL;
 
 size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
 size_t linewidth = V4L2_FRAME_WIDTH;
@@ -58,6 +58,12 @@ void open_vpipe()
     vid_format.fmt.pix.width = V4L2_FRAME_WIDTH;
     vid_format.fmt.pix.height = V4L2_FRAME_HEIGHT;
     vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
+    if (!format_properties(vid_format.fmt.pix.pixelformat,
+        vid_format.fmt.pix.width, vid_format.fmt.pix.height,
+        &linewidth,
+        &framesize)) {
+        printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
+    }
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.field = V4L2_FIELD_NONE;
     vid_format.fmt.pix.bytesperline = linewidth;
@@ -71,14 +77,6 @@ void open_vpipe()
 
     printf("frame: format=%d\tsize=%lu\n", FRAME_FORMAT, framesize);
     print_format(&vid_format);
-
-
-    if (!format_properties(vid_format.fmt.pix.pixelformat,
-        vid_format.fmt.pix.width, vid_format.fmt.pix.height,
-        &linewidth,
-        &framesize)) {
-        printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
-    }
 
     memset(&vid_format, 0, sizeof(vid_format));
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;

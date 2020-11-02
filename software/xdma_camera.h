@@ -40,6 +40,10 @@
 extern int fpga_fd_c2h;
 extern int fpga_fd_user;
 
+extern char* real_video;
+extern int real_width;
+extern int real_height;
+
 #define XDMA_CAM_DEBUG 0
 
 
