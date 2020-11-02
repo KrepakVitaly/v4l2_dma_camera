@@ -20,7 +20,7 @@ void usage(char* exec)
         "  -d | --xdma name       Use name as spidev device\n"
         "  -h | --help              Print this message\n"
         "  -v | --video name        Use name as v4l2loopback device\n", 
-        exec, v4l2dev);
+        exec);
 }
 
 #endif // MAIN_H
