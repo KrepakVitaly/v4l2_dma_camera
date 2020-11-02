@@ -3,6 +3,8 @@
 int fpga_fd_c2h;
 int fpga_fd_user;
 
+void* map_base;
+
 int real_width = XDMA_FRAME_WIDTH;
 int real_height = XDMA_FRAME_WIDTH;
 
@@ -11,27 +13,20 @@ static char* real_video = NULL;
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
     //TODO add program generated pattern
-
-    set_camera_settings(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
-
-    get_dma_data(XDMA_DEVICE_NAME_DEFAULT,
-        XDMA_FRAME_BASE_ADDR,
+    get_dma_data(XDMA_FRAME_BASE_ADDR,
         XDMA_FRAME_HEIGHT * XDMA_FRAME_WIDTH * 2, 0, 1,
         frame_buff);
 }
 
-int get_dma_data(char* devicename,
-    uint32_t addr, uint32_t size, uint32_t offset, 
+int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset, 
     uint32_t count,
     char* buffer)
 {
     unsigned int rc;
-    fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK);
-    assert(fpga_fd_c2h >= 0);
-    //printf("get_dma_data size == %d\r\n", size);
+
     while (count--)
     {
-        memset(buffer, 0x00, size);
+        //memset(buffer, 0x00, size);
         /* select AXI MM address */
         off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
         /* read data from AXI MM into buffer using SGDMA */
@@ -40,7 +35,6 @@ int get_dma_data(char* devicename,
             printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
         }
     }
-
     //reodrder data for 8 bit rggb
     uint16_t pix_12bit_0 = 0;
     uint16_t pix_12bit_1 = 0;
@@ -87,30 +81,18 @@ int get_dma_data(char* devicename,
           printf("buffer[%d] %02x \r\n", i, buffer[i]);
       }*/
 
-    if (fpga_fd_c2h >= 0) {
-        close(fpga_fd_c2h);
-    }
     return 0;
 }
 
-int set_camera_settings(char* devicename, 
-    uint16_t exposure_time,
+int set_camera_settings(uint16_t exposure_time,
     int pattern, 
     int digital_iso)
 {
-    void* map_base, * virt_addr;
+    void* virt_addr;
     uint32_t read_result, writeval;
     off_t target;
 
-    if ((fpga_fd_user = open(devicename, O_RDWR | O_SYNC)) == -1) FATAL;
-    //printf("character device %s opened.\n", devicename);
-    //fflush(stdout);
 
-    /* map one page */
-    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fpga_fd_user, 0);
-    if (map_base == (void*)-1) FATAL;
-    //printf("Memory mapped at address %p.\n", map_base);
-    //fflush(stdout);
 
     if (pattern == 1)
     {
@@ -170,6 +152,15 @@ int set_camera_settings(char* devicename,
         //fflush(stdout);
     }
 
+    return 0;
+}    
+
+
+int exposure_frame()
+{
+    void* virt_addr;
+    uint32_t read_result, writeval;
+    off_t target;
 
     //записать 1 в регистр с адресом 0. — помощью этой команды драйвер дает команду zynq записать кадр с сенсора в zynq.
     target = 0;
@@ -179,7 +170,6 @@ int set_camera_settings(char* devicename,
     *((uint32_t*)virt_addr) = writeval;
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     //fflush(stdout);
-
     //записал ли zynq кадр в пам€ть.
     do
     {
@@ -202,26 +192,42 @@ int set_camera_settings(char* devicename,
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     //fflush(stdout);
 
-    if (munmap(map_base, MAP_SIZE) == -1) FATAL;
-    close(fpga_fd_user);
-    return 0;
-}    
-
-
-int exposure_frame()
-{
     return 0;
 }
 
-int init_dma_camera()
+int init_dma_camera(char* devicename)
 {
     //open devices
+    if ((fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK)) == -1) FATAL;
+    assert(fpga_fd_c2h >= 0);
+    printf("character device %s opened.\n", devicename);
+
+    if ((fpga_fd_user = open(XDMA_DEVICE_USER_DEFAULT, O_RDWR | O_SYNC)) == -1) FATAL;
+    assert(fpga_fd_user >= 0);
+    printf("character device %s opened.\n", devicename);
+    fflush(stdout);
+
+    /* map one page */
+    map_base = mmap(0, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fpga_fd_user, 0);
+    if (map_base == (void*)-1) FATAL;
+    printf("Memory mapped at address %p.\n", map_base);
+    fflush(stdout);
+
+    set_camera_settings(0x40, pattern, 0x80);
+    
     return 0;
 }
 
 
 int deinit_dma_camera()
 {
-    //open devices
+    //close devices
+    if (munmap(map_base, MAP_SIZE) == -1) FATAL;
+    close(fpga_fd_user);
+
+    if (fpga_fd_c2h >= 0) {
+        close(fpga_fd_c2h);
+    }
+
     return 0;
 }

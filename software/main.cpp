@@ -74,7 +74,7 @@ int main(int argc, char** argv)
     }
 
     open_vpipe();
-    init_dma_camera();
+    init_dma_camera(XDMA_DEVICE_C2H_DEFAULT);
 
     uint16_t i = 0;
     while (1)

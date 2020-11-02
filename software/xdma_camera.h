@@ -30,8 +30,8 @@
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
 
-#define XDMA_DEVICE_NAME_DEFAULT "/dev/xdma0_c2h_0"
-#define XDMA_DEVICE_USER  "/dev/xdma0_user"
+#define XDMA_DEVICE_C2H_DEFAULT "/dev/xdma0_c2h_0"
+#define XDMA_DEVICE_USER_DEFAULT  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
 
 #define XDMA_FRAME_WIDTH  2064
@@ -45,9 +45,9 @@ extern int fpga_fd_user;
 
 void get_dma_frame(char* , uint16_t);
 int exposure_frame();
-int init_dma_camera();
+int init_dma_camera(char* devicename);
 int deinit_dma_camera();
-int set_camera_settings(char*, uint16_t, int, int);
-int get_dma_data(char*, uint32_t, uint32_t, uint32_t, uint32_t, char*);
+int set_camera_settings(uint16_t, int, int);
+int get_dma_data(uint32_t, uint32_t, uint32_t, uint32_t, char*);
 
 #endif // XDMA_CAMERA_H
