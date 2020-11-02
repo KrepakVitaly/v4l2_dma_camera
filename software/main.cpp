@@ -28,9 +28,7 @@ int main(int argc, char** argv)
 
         switch (retc) {
         case 0:
-            break;
-
-        case 'd':
+            printf("zero option! %s\r\n", optarg);
             break;
 
         case 'h':
@@ -38,13 +36,41 @@ int main(int argc, char** argv)
             exit(EXIT_SUCCESS);
 
         case 'v':
+            printf("video device %s\r\n", optarg);
+            break;
+
+        case 'f':
+            printf("pix_fmt %s\r\n", optarg);
+            break;
+
+        case 'x':
+            printf("xdma_dma %s\r\n", optarg);
+            break;
+
+        case 'r':
+            printf("xdma_user %s\r\n", optarg);
+            break;
+
+        case 'e':
+            printf("exp %s\r\n", optarg);
+            break;
+
+        case 'i':
+            printf("dig_iso %s\r\n", optarg);
+            break;
+
+        case 'p':
+            printf("pattern %s\r\n", optarg);
+            break;
+
+        case 'l':
+            printf("loglevel %s\r\n", optarg);
             break;
 
         default:
             usage(argv[0]);
             exit(EXIT_FAILURE);
         }
-
     }
 
     open_vpipe();
