@@ -1,12 +1,10 @@
 #include <xdma_camera.h>
 
-
 int fpga_fd;
 
 void get_dma_frame(char* frame_buff, uint16_t pattern)
 {
     //TODO add program generated pattern
-    uint16_t valuet = pattern;
 
     set_camera_settings(XDMA_DEVICE_USER, 0x40, pattern, 0x80);
 

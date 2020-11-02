@@ -5,6 +5,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <assert.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdio.h>
 
 /* ltoh: little to host */
 /* htol: little to host */
