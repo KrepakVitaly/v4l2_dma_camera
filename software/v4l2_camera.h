@@ -28,6 +28,8 @@
 
 extern int v4l2_fd_dev;
 extern uint8_t* vidsendbuf;
+extern size_t framesize;
+extern size_t linewidth;
 
 void open_vpipe();
 void print_format(struct v4l2_format* );

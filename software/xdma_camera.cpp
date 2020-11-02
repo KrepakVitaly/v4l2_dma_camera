@@ -10,11 +10,11 @@ int real_height = XDMA_FRAME_WIDTH;
 
 char* real_video = NULL;
 
-void get_dma_frame(char* frame_buff, uint16_t pattern)
+void get_dma_frame(char* frame_buff, uint32_t size, uint16_t pattern)
 {
     //TODO add program generated pattern
     get_dma_data(XDMA_FRAME_BASE_ADDR,
-        XDMA_FRAME_HEIGHT * XDMA_FRAME_WIDTH * 2, 0, 1,
+        size, 0, 1,
         frame_buff);
 }
 
@@ -66,7 +66,6 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
                 printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
             }
         }
-
     /*
       for (int col = 0; col < 10; col++)
           for (int raw = 0; raw < 2; raw++)
@@ -80,7 +79,6 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
       {
           printf("buffer[%d] %02x \r\n", i, buffer[i]);
       }*/
-
     return 0;
 }
 
@@ -202,7 +200,7 @@ int init_dma_camera(char* devicename)
 
     if ((fpga_fd_user = open(XDMA_DEVICE_USER_DEFAULT, O_RDWR | O_SYNC)) == -1) FATAL;
     assert(fpga_fd_user >= 0);
-    printf("character device %s opened.\n", devicename);
+    printf("character device %s opened.\n", XDMA_DEVICE_USER_DEFAULT);
     fflush(stdout);
 
     /* map one page */

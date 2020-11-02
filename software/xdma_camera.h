@@ -47,7 +47,7 @@ extern int real_height;
 #define XDMA_CAM_DEBUG 0
 
 
-void get_dma_frame(char* , uint16_t);
+void get_dma_frame(char* , uint32_t, uint16_t);
 int exposure_frame();
 int init_dma_camera(char* devicename);
 int deinit_dma_camera();
