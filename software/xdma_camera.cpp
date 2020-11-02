@@ -25,7 +25,7 @@ static int get_dma_data(char* devicename,
     uint32_t count,
     char* buffer)
 {
-    int rc;
+    unsigned int rc;
     fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK);
     assert(fpga_fd_c2h >= 0);
     //printf("get_dma_data size == %d\r\n", size);
@@ -63,7 +63,7 @@ static int get_dma_data(char* devicename,
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = uint8_t(pix_12bit >> 4);
             real_video[raw * real_width + col] = pix_8bit;
-            if (0)
+            if (XDMA_CAM_DEBUG == 3)
             {
                 printf("------\r\n");
                 printf("pix_12bit 0h%02x\r\n", pix_12bit);
@@ -146,7 +146,8 @@ static int set_camera_settings(char* devicename,
 
         exposure_time = (exposure_time * 2 * 0x1c8);
         float exp_time_sec = (float)exposure_time / 54000000;
-        //printf("Exposure time = %f seconds\r\n", exp_time_sec);
+
+        printf("Exposure time = %f seconds\r\n", exp_time_sec);
         //fflush(stdout);
 
     }
@@ -207,18 +208,20 @@ static int set_camera_settings(char* devicename,
 }    
 
 
-static int exposure_frame(char* devicename)
+static int exposure_frame()
 {
-    
+    return 0;
 }
 
-static int init_dma_camera(char* devicename)
+static int init_dma_camera()
 {
     //open devices
+    return 0;
 }
 
 
-static int deinit_dma_camera(char* devicename)
+static int deinit_dma_camera()
 {
     //open devices
+    return 0;
 }

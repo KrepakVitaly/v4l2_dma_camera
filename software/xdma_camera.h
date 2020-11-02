@@ -40,10 +40,13 @@
 extern int fpga_fd_c2h;
 extern int fpga_fd_user;
 
+#define XDMA_CAM_DEBUG 0
+
 
 void get_dma_frame(char* , uint16_t);
-static int exposure_frame(char*);
-static int init_dma_camera(char*);
+static int exposure_frame();
+static int init_dma_camera();
+static int deinit_dma_camera();
 static int set_camera_settings(char*, uint16_t, int, int);
 static int get_dma_data(char*, uint32_t, uint32_t, uint32_t, uint32_t, char*);
 
