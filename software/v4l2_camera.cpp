@@ -12,7 +12,7 @@ static void open_vpipe()
     printf("using output device: %s\r\n", video_device);
 
     v4l2_fd_dev = open(video_device, O_RDWR);
-    assert(fdwr >= 0);
+    assert(v4l2_fd_dev >= 0);
 
     printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", v4l2_fd_dev);
     if (fdwr < 0)
@@ -56,8 +56,8 @@ static void open_vpipe()
     print_format(&vid_format);
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-    vid_format.fmt.pix.width = FRAME_WIDTH;
-    vid_format.fmt.pix.height = FRAME_HEIGHT;
+    vid_format.fmt.pix.width = V4L2_FRAME_WIDTH;
+    vid_format.fmt.pix.height = V4L2_FRAME_HEIGHT;
     vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.field = V4L2_FIELD_NONE;
@@ -143,4 +143,12 @@ int format_properties(const unsigned int format,
     if (framewidth)*framewidth = fw;
 
     return 1;
+}
+
+static void close_vpipe()
+{
+    printf("vidsendbuf freed\r\n");
+    close(v4l2_fd_dev);
+    printf("V4L2 sink closed\r\n");
+    return;
 }
