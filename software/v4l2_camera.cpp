@@ -73,7 +73,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
         vid_format.fmt.pix.width, vid_format.fmt.pix.height,
         &linewidth,
         &framesize)) {
-        printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
+        printf("unable to guess correct settings for format '%d' %s\n", vid_format.fmt.pix.pixelformat, pixfmt);
     }
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.bytesperline = linewidth;
@@ -86,7 +86,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     ret_code = ioctl(v4l2_fd_dev, VIDIOC_S_FMT, &vid_format);
     assert(ret_code != -1);
 
-    printf("frame: format=%d\tsize=%lu\n", FRAME_FORMAT, framesize);
+    printf("frame: format=%d\tsize=%lu\n", get_pixformat_by_name(pixfmt), framesize);
     print_format(&vid_format);
 
     memset(&vid_format, 0, sizeof(vid_format));
