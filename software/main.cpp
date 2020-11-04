@@ -40,8 +40,8 @@ int main(int argc, char** argv)
     char* xdma_user = DEFAULT_XDMA_DEVICE_USER;
     unsigned int exp = DEFAULT_EXPOSURE;
     unsigned int dig_iso = DEFAULT_DIGITAL_ISO;
-    uint8_t pattern = DEFAULT_PATTERN;
-    uint8_t loglevel = DEFAULT_LOGLEVEL;
+    unsigned int pattern = DEFAULT_PATTERN;
+    unsigned int loglevel = DEFAULT_LOGLEVEL;
     
     // processing command line parameters
     for (int index;;)
@@ -161,22 +161,22 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_exp)) 
     {
         opt_exp[OPT_LEN - 1] = '\n';
-        sscanf(opt_exp+2, "%x%99[^\n]", &exp); // do hex value sscanf
+        sscanf(opt_exp+2, "%x", &exp); // do hex value sscanf
     }
     if (!opt_empty(opt_dig_iso)) 
     {
         opt_dig_iso[OPT_LEN - 1] = '\n';
-        sscanf(opt_dig_iso+2, "%x%99[^\n]", &dig_iso); // do hex value sscanf
+        sscanf(opt_dig_iso+2, "%x", &dig_iso); // do hex value sscanf
     }
     if (!opt_empty(opt_pattern)) 
     {
         opt_pattern[OPT_LEN - 1] = '\n';
-        sscanf(opt_pattern, "%d%99[^\n]", &pattern); // do value sscanf
+        sscanf(opt_pattern, "%u", &pattern); // do value sscanf
     }
     if (!opt_empty(opt_loglevel))
     {
         opt_loglevel[OPT_LEN - 1] = '\n';
-        sscanf(opt_loglevel, "%d%99[^\n]", &loglevel); // do value sscanf
+        sscanf(opt_loglevel, "%u", &loglevel); // do value sscanf
     }
     
     printf("video_dev %s\r\n", video_dev);
