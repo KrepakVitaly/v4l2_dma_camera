@@ -9,7 +9,7 @@ int opt_empty(char* c)
     return 0;
 }
 
-void reodrder_data_8to_12bit_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, uint8_t* dest, , uint16_t dest_w, uint16_t dest_h)
+void reodrder_data_8to_12bit_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, uint8_t* dest, uint16_t dest_w, uint16_t dest_h)
 {
     uint16_t pix_12bit_0 = 0;
     uint16_t pix_12bit_1 = 0;
