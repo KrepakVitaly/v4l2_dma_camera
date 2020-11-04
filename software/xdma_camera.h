@@ -45,7 +45,7 @@ extern int fpga_fd_user;
 
 void get_dma_frame(uint8_t* , uint32_t, uint16_t);
 int exposure_frame();
-int init_dma_camera(char* devicename, char* reg_devicename);
+int init_dma_camera(char* devicename, char* reg_devicename, uint16_t exp, uint8_t pattern, uint16_t iso);
 int deinit_dma_camera();
 int set_camera_settings(uint16_t, int, int);
 int get_dma_data(uint32_t, uint32_t, uint32_t, uint32_t, uint8_t*);

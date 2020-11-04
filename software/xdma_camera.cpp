@@ -141,7 +141,7 @@ int exposure_frame()
     return 0;
 }
 
-int init_dma_camera(char* devicename, char* reg_devicename)
+int init_dma_camera(char* devicename, char* reg_devicename, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
     //open dma device
     if ((fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK)) == -1) FATAL;
@@ -159,8 +159,7 @@ int init_dma_camera(char* devicename, char* reg_devicename)
     printf("Memory mapped at address %p.\n", map_base);
     fflush(stdout);
 
-    set_camera_settings(DEFAULT_EXPOSURE, DEFAULT_PATTERN, DEFAULT_DIGITAL_ISO);
-
+    set_camera_settings(exp, pattern, iso);
 
     return 0;
 }
@@ -176,7 +175,7 @@ int deinit_dma_camera()
         close(fpga_fd_c2h);
     }
 
-    free(real_video);
+ 
 
     return 0;
 }

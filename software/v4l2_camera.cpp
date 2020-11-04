@@ -170,5 +170,6 @@ void close_vpipe()
     close(v4l2_fd_dev);
     printf("V4L2 sink closed\r\n");
     deinit_dma_camera();
+    free(real_video);
     return;
 }
