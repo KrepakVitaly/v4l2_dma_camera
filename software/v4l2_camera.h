@@ -37,15 +37,6 @@
 
 #define FRAME_FORMAT V4L2_PIX_FMT_SGRBG8
 
-extern int v4l2_fd_dev;
-extern uint8_t* vidsendbuf;
-extern size_t framesize;
-extern size_t linewidth;
-
-extern char* real_video;
-extern int real_width;
-extern int real_height;
-
 void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso);
 void update_frame();
 void print_format(struct v4l2_format* );

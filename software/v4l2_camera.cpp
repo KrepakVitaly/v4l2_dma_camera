@@ -107,7 +107,7 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
     }
     print_format(&vid_format);
 
-    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
+    videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
 
     return;
 }
@@ -117,9 +117,9 @@ void update_frame()
     printf("Start exposure_frame\r\n");
     exposure_frame();
     printf("Start get_dma_frame\r\n");
-    get_dma_frame(vidsendbuf, framesize);
+    get_dma_frame(videosendbuf, framesize);
     printf("Start write v4l2_fd_dev\r\n");
-    write(v4l2_fd_dev, vidsendbuf, framesize);
+    write(v4l2_fd_dev, videosendbuf, framesize);
 }
 
 
@@ -172,11 +172,10 @@ int format_properties(const unsigned int format,
 
 void close_vpipe()
 {
-    free(vidsendbuf);
+    free(videosendbuf);
     printf("vidsendbuf freed\r\n");
     close(v4l2_fd_dev);
     printf("V4L2 sink closed\r\n");
     deinit_dma_camera();
-    free(real_video);
     return;
 }
