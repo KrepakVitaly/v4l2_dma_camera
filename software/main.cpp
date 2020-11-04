@@ -178,7 +178,7 @@ int main(int argc, char** argv)
         printf("video_dev %s\r\n", video_dev);
         printf("width %d\r\n", width);
         printf("height %d\r\n", height);
-        printf("pix_fmt %s", pix_fmt);
+        printf("pix_fmt %s\r\n", pix_fmt);
         printf("xdma_dma %s\r\n", xdma_dma);
         printf("xdma_user %s\r\n", xdma_user);
         printf("exp %x\r\n", exp);

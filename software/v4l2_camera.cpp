@@ -47,7 +47,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
     while (ioctl(v4l2_fd_dev, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
     {
-        //printf("%s\n", vid_fmtdesc.description);
+        printf("%s\n", vid_fmtdesc.description);
         vid_fmtdesc.index++;
     }
 
@@ -64,6 +64,9 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
         exit(EXIT_FAILURE);
     }
     print_format(&vid_format);
+
+
+    printf("get_pixformat_by_name %d \r\n", get_pixformat_by_name(pixfmt))
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = user_width;
@@ -173,6 +176,8 @@ unsigned int get_pixformat_by_name(char* pixfmr_str)
         return V4L2_PIX_FMT_SBGGR12;
     if (strcmp(pixfmr_str, "V4L2_PIX_FMT_Y16"))
         return V4L2_PIX_FMT_Y16;   
+
+    return -1;
 }
 
 int format_properties(const unsigned int format,
