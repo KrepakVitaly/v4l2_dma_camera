@@ -46,7 +46,7 @@ extern char* real_video;
 extern int real_width;
 extern int real_height;
 
-void open_vpipe();
+void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso);
 void update_frame();
 void print_format(struct v4l2_format* );
 int format_properties(const unsigned int, const unsigned int, const unsigned int, size_t*, size_t*);

@@ -7,7 +7,7 @@ void* map_base;
 
 void get_dma_frame(uint8_t* buffer, uint32_t size, uint16_t pattern)
 {
-    //TODO add program generated pattern
+    //TODO add program generated pattern to use progrma without camera
     get_dma_data(XDMA_FRAME_BASE_ADDR,
         size, XDMA_FRAME_ADDR_OFFSET, XDMA_SGDMA_READ_COUNT,
         buffer);
@@ -99,8 +99,7 @@ int set_camera_settings(uint16_t exposure_time,
     }
 
     return 0;
-}    
-
+}
 
 int exposure_frame()
 {
@@ -144,7 +143,7 @@ int exposure_frame()
 int init_dma_camera(char* devicename, char* reg_devicename, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
     //open dma device
-    if ((fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK)) == -1) FATAL;
+    if ((fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK)) == -1) FATAL; //TODO use NONBLOCK mode, now it's not used
     assert(fpga_fd_c2h >= 0);
     printf("character device %s opened.\n", devicename);
     //open user register's device
@@ -174,8 +173,6 @@ int deinit_dma_camera()
     if (fpga_fd_c2h >= 0) {
         close(fpga_fd_c2h);
     }
-
- 
 
     return 0;
 }

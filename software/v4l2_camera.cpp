@@ -1,29 +1,36 @@
 #include <v4l2_camera.h>
 
-int v4l2_fd_dev = 0;
-uint8_t* vidsendbuf = NULL;
+int v4l2_fd_dev = 0; //v4l2 device to write
+uint8_t* videosendbuf = NULL; //
+//uint8_t* real_video = NULL;
 
-char* real_video = NULL;
-int real_width = XDMA_FRAME_WIDTH;
-int real_height = XDMA_FRAME_WIDTH;
+int user_width = XDMA_FRAME_WIDTH;
+int user_height = XDMA_FRAME_WIDTH;
+int user_linewidth = XDMA_FRAME_WIDTH*2;
 
-size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
-size_t linewidth = V4L2_FRAME_WIDTH;
+int v4l2_width = 0;
+int v4l2_height = 0;
 
-void open_vpipe()
+//int resize_image_buf
+
+/* if user sieze != v4l2 size, we need to add/delete some raws and column to image */
+/* */
+
+//int dma_size = real_width * real_height * 2;
+
+//size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
+//size_t linewidth = V4L2_FRAME_WIDTH;
+
+void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
+    init_dma_camera(xdma_c2h, xdma_user, exp, pattern, iso);
 
-    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H, DEFAULT_XDMA_DEVICE_USER, real_width * real_height * 2, DEFAULT_EXPOSURE, DEFAULT_PATTERN, DEFAULT_DIGITAL_ISO);
-
-    real_video = (char*)malloc(sizeof(char) * dma_size);
-    init_buffer_size = dma_size;
-
-    const char* video_device = DEFAULT_VIDEO_DEVICE;
+    const char* video_device = ;
     int ret_code = 0;
 
     printf("using output device: %s\r\n", video_device);
 
-    v4l2_fd_dev = open(video_device, O_RDWR);
+    v4l2_fd_dev = open(video_device, O_RDWR); //todo add O_NONBLOCK?
     assert(v4l2_fd_dev >= 0);
 
     printf("V4L2 sink opened O_RDWR, descriptor %d\r\n", v4l2_fd_dev);
@@ -75,8 +82,8 @@ void open_vpipe()
         printf("unable to guess correct settings for format '%d'\n", FRAME_FORMAT);
     }
     vid_format.fmt.pix.sizeimage = framesize;
-    vid_format.fmt.pix.field = V4L2_FIELD_NONE;
     vid_format.fmt.pix.bytesperline = linewidth;
+    vid_format.fmt.pix.field = V4L2_FIELD_NONE;
     vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB; //V4L2_COLORSPACE_RAW;
 
     printf("V4L2-set-0 VIDIOC_S_FMT\r\n");
@@ -101,7 +108,7 @@ void open_vpipe()
     }
     print_format(&vid_format);
 
-    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize * 4);
+    vidsendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
 
     return;
 }
@@ -111,9 +118,9 @@ void update_frame()
     printf("Start exposure_frame\r\n");
     exposure_frame();
     printf("Start get_dma_frame\r\n");
-    get_dma_frame(vidsendbuf, XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT, 0);
+    get_dma_frame(vidsendbuf, framesize);
     printf("Start write v4l2_fd_dev\r\n");
-    write(v4l2_fd_dev, real_video, real_width * real_height);
+    write(v4l2_fd_dev, vidsendbuf, framesize);
 }
 
 
