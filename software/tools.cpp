@@ -9,30 +9,28 @@ int opt_empty(char* c)
     return 0;
 }
 
-void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint16_t h)
-{/*
+void reodrder_data_8to_12bit_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, uint8_t* dest, , uint16_t dest_w, uint16_t dest_h)
+{
     uint16_t pix_12bit_0 = 0;
     uint16_t pix_12bit_1 = 0;
-
     uint16_t pix_12bit = 0;
-
     uint8_t pix_8bit = 0;
 
-    for (int raw = 0; raw < real_height; raw++)
-        for (int col = 0; col < real_width; col++)
+    for (int raw = 0; raw < dest_h; raw++)
+        for (int col = 0; col < dest_w; col++)
         {
-            if ((raw * XDMA_FRAME_HEIGHT * 2 + col * 2 + 1) >= XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT * 2)
+            if ((raw * src_h * 2 + col * 2 + 1) >= src_w * src_h * 2)
             {
-                real_video[raw * real_width + col] = 0x66;
+                dest[raw * dest_w + col] = 0x66;
                 continue;
             }
 
-            pix_12bit_0 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 0];
-            pix_12bit_1 = buffer[raw * XDMA_FRAME_WIDTH * 2 + col * 2 + 1];
+            pix_12bit_0 = src[raw * src_w * 2 + col * 2 + 0];
+            pix_12bit_1 = src[raw * src_w * 2 + col * 2 + 1];
             pix_12bit = pix_12bit_0 + (pix_12bit_1 << 8);
             pix_8bit = uint8_t(pix_12bit >> 4);
-            real_video[raw * real_width + col] = pix_8bit;
-            //if (XDMA_CAM_DEBUG == 3)
+            dest[raw * dest_w + col] = pix_8bit;
+            if (0)
             {
                 printf("------\r\n");
                 printf("pix_12bit 0h%02x\r\n", pix_12bit);
@@ -40,20 +38,23 @@ void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint1
                 printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
                 printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
             }
-        }*/
-    /*
-      for (int col = 0; col < 10; col++)
-          for (int raw = 0; raw < 2; raw++)
-          {
-              printf("buffer[%d * real_height + %d * 2 + 0] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 0]);
-              printf("buffer[%d * real_height + %d * 2 + 1] %02x \r\n", col, raw, buffer[col * real_height + raw * 2 + 1]);
-              printf("real_video[%d * real_width + %d]     %02x  \r\n", col, raw, real_video[col * real_height + raw]);
-          }
+        }
+    if (0)
+    {
+        for (int col = 0; col < 10; col++)
+            for (int raw = 0; raw < 2; raw++)
+            {
+                printf("src[%d * src_h + %d * 2 + 0] %02x \r\n", col, raw, src[col * src_h + raw * 2 + 0]);
+                printf("src[%d * src_h + %d * 2 + 1] %02x \r\n", col, raw, src[col * src_h + raw * 2 + 1]);
+                printf("dest[%d * dest_h + %d]     %02x  \r\n", col, raw, dest[col * dest_h + raw]);
+            }
 
-      for (int i = 0; i < 16; i++)
-      {
-          printf("buffer[%d] %02x \r\n", i, buffer[i]);
-      }*/
+        for (int i = 0; i < 16; i++)
+        {
+            printf("src[%d] %02x \r\n", i, src[i]);
+        }
+    }
+
 }
 
 

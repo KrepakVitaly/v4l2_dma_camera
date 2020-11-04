@@ -7,18 +7,16 @@ int user_width = DEFAULT_FRAME_WIDTH;
 int user_height = DEFAULT_FRAME_HEIGHT;
 int user_linewidth = user_width*2;
 
-//int v4l2_width = 0;
-//int v4l2_height = 0;
-
-//int resize_image_buf
+uint8_t need_buf_reorder = 0;
+uint8_t* tmp_buf = NULL;
 
 /* if user sieze != v4l2 size, we need to add/delete some raws and column to image */
 /* */
 
-//int dma_size = real_width * real_height * 2;
-
 size_t framesize = 0;
 size_t linewidth = 0;
+
+
 
 void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
@@ -107,17 +105,28 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
 
     videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
 
+    if (need_buf_reorder == 1)
+    {
+        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2);
+    }
+
     return;
 }
 
 void update_frame()
 {
-    //printf("Start exposure_frame\r\n");
     exposure_frame();
-    //printf("Start get_dma_frame\r\n");
-    get_dma_frame(videosendbuf, framesize);
-    //printf("Start write v4l2_fd_dev\r\n");
+    if (need_buf_reorder == 1)
+    {
+        get_dma_frame(tmp_buf, user_width*user_height*2);
+        reodrder_data_8to_12bit_rggb(tmp_buf, user_width, user_height, videosendbuf, linewidth, framesize/linewidth);
+    }
+    else
+    {
+        get_dma_frame(videosendbuf, framesize);
+    }
     write(v4l2_fd_dev, videosendbuf, framesize);
+    
 }
 
 
@@ -153,6 +162,7 @@ int format_properties(const unsigned int format,
     case V4L2_PIX_FMT_SBGGR8: case V4L2_PIX_FMT_SGBRG8: case V4L2_PIX_FMT_SGRBG8: case V4L2_PIX_FMT_SRGGB8:
         lw = ROUND_UP_2(width);
         fw = lw * height;
+        need_buf_reorder = 1;
         break;
     case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12: case V4L2_PIX_FMT_Y16:
         lw = (ROUND_UP_2(width) * 2);
