@@ -121,7 +121,6 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
-        //sscanf(opt_size, "%u x%u", &width, &height); // do sscanf
 
         char delim_str[] = "x";
 
@@ -188,7 +187,6 @@ int main(int argc, char** argv)
         printf("loglevel %d\r\n", loglevel);
     }
 
-    exit(0);
     open_vpipe();
     uint16_t i = 0;
     while (1)

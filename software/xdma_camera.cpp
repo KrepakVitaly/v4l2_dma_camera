@@ -5,16 +5,11 @@ int fpga_fd_user;
 
 void* map_base;
 
-int real_width = XDMA_FRAME_WIDTH;
-int real_height = XDMA_FRAME_WIDTH;
-
-char* real_video = NULL;
-
 void get_dma_frame(uint8_t* buffer, uint32_t size, uint16_t pattern)
 {
     //TODO add program generated pattern
     get_dma_data(XDMA_FRAME_BASE_ADDR,
-        size, 0, 1,
+        size, XDMA_FRAME_ADDR_OFFSET, XDMA_SGDMA_READ_COUNT,
         buffer);
 }
 
@@ -24,18 +19,17 @@ int get_dma_data(uint32_t addr, uint32_t size, uint32_t offset,
 {
     unsigned int rc;
     assert(fpga_fd_c2h >= 0);
+
     while (count--)
     {
         memset(buffer, 0x00, size);
         /* select AXI MM address */
         off_t off = lseek(fpga_fd_c2h, addr, SEEK_SET);
         /* read data from AXI MM into buffer using SGDMA */
-        printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
         rc = read(fpga_fd_c2h, buffer, size);
         if ((rc > 0) && (rc < size)) {
             printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
         }
-        printf("Short read of %d bytes into a %d bytes buffer, could be a packet read?\n", rc, size);
     }
     return 0;
 }
@@ -50,7 +44,7 @@ int set_camera_settings(uint16_t exposure_time,
 
     if (pattern == 1)
     {
-        target = 0x10; //включить паттер генератор,
+        target = 0x10; //enable pattern generator on Zynq board
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = 1;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -61,7 +55,7 @@ int set_camera_settings(uint16_t exposure_time,
     }
     else
     {
-        target = 0x10; //выключить паттер генератор,
+        target = 0x10; //disable pattern generator on Zynq board
         virt_addr = map_base + target; /* calculate the virtual address to be accessed */
         writeval = 0;
         writeval = htoll(writeval); /* swap 32-bit endianess if host is not little-endian */
@@ -70,7 +64,9 @@ int set_camera_settings(uint16_t exposure_time,
         //printf("pattern generator disabled\r\n");
         //fflush(stdout);
     }
-
+    //0x30 register 32 bit, 0x00000040 Ц max exposure time (0.0389 sec),
+    //0x00000920 Ц min exposure time (0.0005573 sec). Values out this range ignored
+    //exposure time = (0x941 Ц register value) * (2 * 0x1c8) / 54000000 seconds
     if (exposure_time >= 0x00000040 || exposure_time <= 0x00000920)
     {
         target = 0x20;
@@ -87,13 +83,9 @@ int set_camera_settings(uint16_t exposure_time,
         //fflush(stdout);
 
     }
-    //0xf71f0020 регистр 32 бит, 0x00000040 Ц максимальное врем€ экспозиции(0, 0389 с),
-    //0x00000920 Ц минимальное врем€ экспозиции(0, 0005573 c).«начени€ вне этого интервала
-    //игнорируютс€.
-    //¬рем€ экспозиции = (0x941 Ц значение регистра) * (2 * 0x1c8) / 54000000 c
-    //0xf71f0030 регистр 32 бит, 0x00000000 Ц минимальное значение аналогового усилени€,
-    //0x000000ff Ц максимальное значение аналогового усилени€.«начени€ вне этого интервала
-    //игнорируютс€.
+
+    //0x30 register 32 bit, 0x00000000 Ц minimum value of analog amplification,
+    //0x000000ff Ц max value of analog amplification. Values out this range ignored
     if (digital_iso >= 0x00000000 || digital_iso <= 0x000000ff)
     {
         target = 0x30;
@@ -116,7 +108,7 @@ int exposure_frame()
     uint32_t read_result, writeval;
     off_t target;
 
-    //записать 1 в регистр с адресом 0. — помощью этой команды драйвер дает команду zynq записать кадр с сенсора в zynq.
+    //write 1 to register at addr 0x0. This action set camera in a record mode to copy frame from sensor to Zynq FPGA memory
     target = 0;
     virt_addr = map_base + target; /* calculate the virtual address to be accessed */
     writeval = 1;
@@ -124,7 +116,7 @@ int exposure_frame()
     *((uint32_t*)virt_addr) = writeval;
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     //fflush(stdout);
-    //записал ли zynq кадр в пам€ть.
+    //Check if Zynq wrote frame to own memory from sensor. Status register at addr 0x4
     do
     {
         usleep(100);
@@ -137,7 +129,7 @@ int exposure_frame()
     //printf("Write 32-bits value 0x%08x to 0x%08x (0x%p)\n", (unsigned int)writeval, (unsigned int)target, virt_addr);
     //fflush(stdout);
 
-    // ≈го нужно сбросить в 0
+    // Clear status register at addr 0x4
     target = 0x4;
     virt_addr = map_base + target; /* calculate the virtual address to be accessed */
     writeval = 0;
@@ -149,16 +141,16 @@ int exposure_frame()
     return 0;
 }
 
-int init_dma_camera(char* devicename)
+int init_dma_camera(char* devicename, char* reg_devicename)
 {
-    //open devices
+    //open dma device
     if ((fpga_fd_c2h = open(devicename, O_RDWR | O_NONBLOCK)) == -1) FATAL;
     assert(fpga_fd_c2h >= 0);
     printf("character device %s opened.\n", devicename);
-
-    if ((fpga_fd_user = open(DEFAULT_XDMA_DEVICE_USER, O_RDWR | O_SYNC)) == -1) FATAL;
+    //open user register's device
+    if ((fpga_fd_user = open(reg_devicename, O_RDWR | O_SYNC)) == -1) FATAL;
     assert(fpga_fd_user >= 0);
-    printf("character device %s opened.\n", DEFAULT_XDMA_DEVICE_USER);
+    printf("character device %s opened.\n", reg_devicename);
     fflush(stdout);
 
     /* map one page */
@@ -167,10 +159,9 @@ int init_dma_camera(char* devicename)
     printf("Memory mapped at address %p.\n", map_base);
     fflush(stdout);
 
-    set_camera_settings(0x40, 0, 0x80);
+    set_camera_settings(DEFAULT_EXPOSURE, DEFAULT_PATTERN, DEFAULT_DIGITAL_ISO);
 
-    real_video = (char*)malloc(sizeof(char) * real_width * real_height*2);
-    
+
     return 0;
 }
 

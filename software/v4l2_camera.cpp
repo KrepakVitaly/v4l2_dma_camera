@@ -3,12 +3,19 @@
 int v4l2_fd_dev = 0;
 uint8_t* vidsendbuf = NULL;
 
+char* real_video = NULL;
+int real_width = XDMA_FRAME_WIDTH;
+int real_height = XDMA_FRAME_WIDTH;
+
 size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
 size_t linewidth = V4L2_FRAME_WIDTH;
 
 void open_vpipe()
 {
-    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H);
+    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H, DEFAULT_XDMA_DEVICE_USER, real_width * real_height * 2);
+
+    real_video = (char*)malloc(sizeof(char) * dma_size);
+    init_buffer_size = dma_size;
 
     const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;

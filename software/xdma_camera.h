@@ -33,22 +33,19 @@
 #define DEFAULT_XDMA_DEVICE_C2H "/dev/xdma0_c2h_0"
 #define DEFAULT_XDMA_DEVICE_USER  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
-
-#define XDMA_FRAME_WIDTH  2064
-#define XDMA_FRAME_HEIGHT 1554
+#define XDMA_FRAME_ADDR_OFFSET 0x0
+#define XDMA_SGDMA_READ_COUNT 0x1
 
 extern int fpga_fd_c2h;
 extern int fpga_fd_user;
 
-extern char* real_video;
-extern int real_width;
-extern int real_height;
+
 
 #define XDMA_CAM_DEBUG 0
 
 void get_dma_frame(uint8_t* , uint32_t, uint16_t);
 int exposure_frame();
-int init_dma_camera(char* devicename);
+int init_dma_camera(char* devicename, char* reg_devicename);
 int deinit_dma_camera();
 int set_camera_settings(uint16_t, int, int);
 int get_dma_data(uint32_t, uint32_t, uint32_t, uint32_t, uint8_t*);

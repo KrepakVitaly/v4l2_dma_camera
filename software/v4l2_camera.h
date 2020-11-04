@@ -24,6 +24,8 @@
 #define V4L2_FRAME_WIDTH  2048
 #define V4L2_FRAME_HEIGHT 1558
 
+#define XDMA_FRAME_WIDTH  2064
+#define XDMA_FRAME_HEIGHT 1554
 
 #define DEFAULT_FRAME_WIDTH  2048
 #define DEFAULT_FRAME_HEIGHT 1558
@@ -39,6 +41,10 @@ extern int v4l2_fd_dev;
 extern uint8_t* vidsendbuf;
 extern size_t framesize;
 extern size_t linewidth;
+
+extern char* real_video;
+extern int real_width;
+extern int real_height;
 
 void open_vpipe();
 void update_frame();
