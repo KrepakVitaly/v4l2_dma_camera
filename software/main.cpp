@@ -38,8 +38,8 @@ int main(int argc, char** argv)
     char* pix_fmt = DEFAULT_DIGITAL_PIX_FMT;
     char* xdma_dma = DEFAULT_XDMA_DEVICE_C2H;
     char* xdma_user = DEFAULT_XDMA_DEVICE_USER;
-    uint8_t exp = DEFAULT_EXPOSURE;
-    uint16_t dig_iso = DEFAULT_DIGITAL_ISO;
+    unsigned int exp = DEFAULT_EXPOSURE;
+    unsigned int dig_iso = DEFAULT_DIGITAL_ISO;
     uint8_t pattern = DEFAULT_PATTERN;
     uint8_t loglevel = DEFAULT_LOGLEVEL;
     
