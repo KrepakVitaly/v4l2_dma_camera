@@ -121,8 +121,12 @@ int main(int argc, char** argv)
         
     if (!opt_empty(opt_size)) 
     {
+        opt_size[OPT_LEN - 1] = '\n';
         sscanf(opt_size, "%dx%d", &width, &height); // do sscanf
         //fflush_input();
+
+        if ((sscanf(command, "flag (%1c,%d)%n", &x1, &y1, &n)) == 2) &&
+            (command[n] == '\0')) Success();
     }
 
     if (!opt_empty(opt_pix_fmt)) 
@@ -142,21 +146,25 @@ int main(int argc, char** argv)
 
     if (!opt_empty(opt_exp)) 
     {
+        opt_exp[OPT_LEN - 1] = '\n';
         sscanf(opt_exp+2, "%x", &exp); // do hex value sscanf
         //fflush_input();
     }
     if (!opt_empty(opt_dig_iso)) 
     {
+        opt_dig_iso[OPT_LEN - 1] = '\n';
         sscanf(opt_dig_iso+2, "%x", &dig_iso); // do hex value sscanf
         //fflush_input();
     }
     if (!opt_empty(opt_pattern)) 
     {
+        opt_pattern[OPT_LEN - 1] = '\n';
         sscanf(opt_pattern, "%d", &pattern); // do value sscanf
         //fflush_input();
     }
     if (!opt_empty(opt_loglevel))
     {
+        opt_loglevel[OPT_LEN - 1] = '\n';
         sscanf(opt_loglevel, "%d", &loglevel); // do value sscanf
         //fflush_input();
     }
