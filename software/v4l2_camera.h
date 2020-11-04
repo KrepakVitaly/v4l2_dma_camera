@@ -35,7 +35,7 @@
 #define DEFAULT_PATTERN 0
 #define DEFAULT_DIGITAL_PIX_FMT "V4L2_PIX_FMT_SGRBG8"
 
-#define FRAME_FORMAT V4L2_PIX_FMT_GREY//V4L2_PIX_FMT_SGRBG8
+#define FRAME_FORMAT V4L2_PIX_FMT_SRGGB12//V4L2_PIX_FMT_GREY//V4L2_PIX_FMT_SGRBG8
 
 void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso);
 void update_frame();
