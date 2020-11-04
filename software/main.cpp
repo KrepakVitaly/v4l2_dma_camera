@@ -211,12 +211,12 @@ int fflush_input()
 {
     int counter = 0;
     int ch = 0; // tmp char for getchar fflush processing
-    printf("start %c\n", c);
+    printf("start %c\n", ch);
     while ((ch = getchar()) != '\n' && ch != EOF)
     {
         /* discard */;
         counter++;
-        printf("%c\n", c);
+        printf("%c\n", ch);
     };
     printf("%i\n", counter);
     return 0;
