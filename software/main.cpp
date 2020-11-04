@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
         switch (retc) {
         case 0:
-            printf("zero option! %s\r\n", optarg);
+            if (DEBUG) printf("zero option! %s\r\n", optarg);
             break;
 
         case 'h':
@@ -63,47 +63,47 @@ int main(int argc, char** argv)
 
         case 'v':
             snprintf(opt_video_dev, OPT_LEN, "%s", optarg);
-            printf("opt_video_dev parameter %s\r\n", opt_video_dev);
+            if (DEBUG) printf("opt_video_dev parameter %s\r\n", opt_video_dev);
             break;
 
         case 's':
             snprintf(opt_size, OPT_LEN, "%s", optarg);
-            printf("opt_size parameter %s\r\n", opt_size);
+            if (DEBUG) printf("opt_size parameter %s\r\n", opt_size);
             break;
 
         case 'f':
             snprintf(opt_pix_fmt, OPT_LEN, "%s", optarg);
-            printf("opt_pix_fmt parameter %s\r\n", opt_pix_fmt);
+            if (DEBUG) printf("opt_pix_fmt parameter %s\r\n", opt_pix_fmt);
             break;
 
         case 'x':
             snprintf(opt_xdma_dma, OPT_LEN, "%s", optarg);
-            printf("opt_xdma_dma parameter %s\r\n", opt_xdma_dma);
+            if (DEBUG) printf("opt_xdma_dma parameter %s\r\n", opt_xdma_dma);
             break;
 
         case 'r':
             snprintf(opt_xdma_user, OPT_LEN, "%s", optarg);
-            printf("opt_xdma_user parameter %s\r\n", opt_xdma_user);
+            if (DEBUG) printf("opt_xdma_user parameter %s\r\n", opt_xdma_user);
             break;
 
         case 'e':
             snprintf(opt_exp, OPT_LEN, "%s", optarg);
-            printf("opt_exp parameter %s\r\n", opt_exp);
+            if (DEBUG) printf("opt_exp parameter %s\r\n", opt_exp);
             break;
 
         case 'i':
             snprintf(opt_dig_iso, OPT_LEN, "%s", optarg);
-            printf("opt_dig_iso parameter %s\r\n", opt_dig_iso);
+            if (DEBUG) printf("opt_dig_iso parameter %s\r\n", opt_dig_iso);
             break;
 
         case 'p':
             snprintf(opt_pattern, OPT_LEN, "%s", optarg);
-            printf("opt_pattern parameter %s\r\n", opt_pattern);
+            if (DEBUG) printf("opt_pattern parameter %s\r\n", opt_pattern);
             break;
 
         case 'l':
             snprintf(opt_loglevel, OPT_LEN, "%s", optarg);
-            printf("opt_loglevel parameter %s\r\n", opt_loglevel);
+            if (DEBUG) printf("opt_loglevel parameter %s\r\n", opt_loglevel);
             break;
 
         default:
@@ -118,7 +118,6 @@ int main(int argc, char** argv)
     {
         video_dev = opt_video_dev;
     }
-        
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
@@ -142,22 +141,18 @@ int main(int argc, char** argv)
         width = strtod(v1str, NULL);
         height = strtod(v2str, NULL);
     }
-
     if (!opt_empty(opt_pix_fmt)) 
     {
         //opt_pix_fmt = 
     }
-
     if (!opt_empty(opt_xdma_dma)) 
     {
         xdma_dma = opt_xdma_dma;
     }
-
     if (!opt_empty(opt_xdma_user)) 
     {
         xdma_user = opt_xdma_user;
     }
-
     if (!opt_empty(opt_exp)) 
     {
         opt_exp[OPT_LEN - 1] = '\n';
@@ -179,16 +174,19 @@ int main(int argc, char** argv)
         sscanf(opt_loglevel, "%u", &loglevel); // do value sscanf
     }
     
-    printf("video_dev %s\r\n", video_dev);
-    printf("width %d\r\n", width);
-    printf("height %d\r\n", height);
-    //printf("pix_fmt %s", pix_fmt);
-    printf("xdma_dma %s\r\n", xdma_dma);
-    printf("xdma_user %s\r\n", xdma_user);
-    printf("exp %x\r\n", exp);
-    printf("dig_iso %x\r\n", dig_iso);
-    printf("pattern %d\r\n", pattern);
-    printf("loglevel %d\r\n", loglevel);
+    if (loglevel >= 1)
+    {
+        printf("video_dev %s\r\n", video_dev);
+        printf("width %d\r\n", width);
+        printf("height %d\r\n", height);
+        //printf("pix_fmt %s", pix_fmt);
+        printf("xdma_dma %s\r\n", xdma_dma);
+        printf("xdma_user %s\r\n", xdma_user);
+        printf("exp %x\r\n", exp);
+        printf("dig_iso %x\r\n", dig_iso);
+        printf("pattern %d\r\n", pattern);
+        printf("loglevel %d\r\n", loglevel);
+    }
 
     exit(0);
     open_vpipe();
@@ -198,7 +196,7 @@ int main(int argc, char** argv)
         i++;
         update_frame();
         usleep(41000);
-        if (DEBUG_LEVEL == 1)
+        if (DEBUG == 1)
             printf("Frame %d\r\n", i);
     }
 
@@ -215,27 +213,3 @@ void sig_handler(int signum)
     exit(0);
 }
 
-int opt_empty(char* c)
-{
-    if (c && !c[0]) {
-        //printf("%s is empty\n", c);
-        return 1;
-    }
-    return 0;
-}
-
-
-int fflush_input()
-{
-    int counter = 0;
-    int ch = 0; // tmp char for getchar fflush processing
-    printf("start %c\n", ch);
-    while ((ch = getchar()) != '\n' && ch != EOF)
-    {
-        /* discard */;
-        counter++;
-        printf("%c\n", ch);
-    };
-    printf("%i\n", counter);
-    return 0;
-}

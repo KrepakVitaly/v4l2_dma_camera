@@ -1,5 +1,14 @@
 #include "tools.h"
 
+
+int opt_empty(char* c)
+{
+    if (c && !c[0]) {
+        return 1;
+    }
+    return 0;
+}
+
 void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint16_t h)
 {/*
     uint16_t pix_12bit_0 = 0;
@@ -45,4 +54,20 @@ void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint1
       {
           printf("buffer[%d] %02x \r\n", i, buffer[i]);
       }*/
+}
+
+
+int fflush_input()
+{
+    int counter = 0;
+    int ch = 0; // tmp char for getchar fflush processing
+    printf("start %c\n", ch);
+    while ((ch = getchar()) != '\n' && ch != EOF)
+    {
+        /* discard */;
+        counter++;
+        printf("%c\n", ch);
+    };
+    printf("%i\n", counter);
+    return 0;
 }
