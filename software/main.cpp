@@ -5,7 +5,6 @@
 #include <getopt.h>
 #include <unistd.h>
 
-#include "xdma_camera.h"
 #include "v4l2_camera.h"
 #include "main.h"
 #include "tools.h"
@@ -74,26 +73,17 @@ int main(int argc, char** argv)
     }
 
     open_vpipe();
-    init_dma_camera(XDMA_DEVICE_C2H_DEFAULT);
-
     uint16_t i = 0;
     while (1)
     {
         i++;
-        printf("Start exposure_frame\r\n");
-        exposure_frame();
-        printf("Start get_dma_frame\r\n");
-        get_dma_frame(vidsendbuf, XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT, 0);
-        printf("Start write v4l2_fd_dev\r\n");
-        write(v4l2_fd_dev, real_video, real_width * real_height);
-
+        update_frame();
         usleep(41000);
         if (DEBUG_LEVEL == 1)
             printf("Frame %d\r\n", i);
     }
 
-    //close_vpipe();
-
+    close_vpipe();
     return 0;
 }
 
@@ -103,6 +93,6 @@ void sig_handler(int signum)
     //Return type of the handler function should be void
     printf("\nInside handler function signum %d\n", signum);
     close_vpipe();
-    deinit_dma_camera();
+    
     exit(0);
 }

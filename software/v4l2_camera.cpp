@@ -8,6 +8,8 @@ size_t linewidth = V4L2_FRAME_WIDTH;
 
 void open_vpipe()
 {
+    init_dma_camera(XDMA_DEVICE_C2H_DEFAULT);
+
     const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;
 
@@ -96,6 +98,17 @@ void open_vpipe()
     return;
 }
 
+void update_frame()
+{
+    printf("Start exposure_frame\r\n");
+    exposure_frame();
+    printf("Start get_dma_frame\r\n");
+    get_dma_frame(vidsendbuf, XDMA_FRAME_WIDTH * XDMA_FRAME_HEIGHT, 0);
+    printf("Start write v4l2_fd_dev\r\n");
+    write(v4l2_fd_dev, real_video, real_width * real_height);
+}
+
+
 void print_format(struct v4l2_format* vid_format) {
     printf("	vid_format->type                =%d\n", vid_format->type);
     printf("	vid_format->fmt.pix.width       =%d\n", vid_format->fmt.pix.width);
@@ -149,5 +162,6 @@ void close_vpipe()
     printf("vidsendbuf freed\r\n");
     close(v4l2_fd_dev);
     printf("V4L2 sink closed\r\n");
+    deinit_dma_camera();
     return;
 }

@@ -3,11 +3,12 @@
 
 #define DEBUG_LEVEL 1
 
-static const char short_options[] = "hv:f:x:r:e:i:p:l:";
+static const char short_options[] = "hv:s:f:x:r:e:i:p:l:";
 
 static const struct option long_options[] = {
     { "help",      no_argument,       NULL, 'h' },
     { "video",     optional_argument, NULL, 'v' },
+    { "size",      optional_argument, NULL, 's' },
     { "pix_fmt",   optional_argument, NULL, 'f' },
     { "xdma_dma",  optional_argument, NULL, 'x' },
     { "xdma_user", optional_argument, NULL, 'r' },
@@ -24,6 +25,7 @@ void usage(char* exec)
         "Options:\n"
         "  -h | --help                Print this message\n"
         "  -v | --video devname       name of v4l2loopback device\n"
+        "  -s | --size wxh            image size\n"
         "  -f | --pix_fmt val         name of v4l2loopback pixel format\n"
         "  -x | --xdma_dma devname    name of XDMA c2h device\n"
         "  -r | --xdma_user devname   name of XDMA user registers device\n"

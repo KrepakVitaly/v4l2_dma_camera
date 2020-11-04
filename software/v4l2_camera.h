@@ -12,6 +12,7 @@
 #include <malloc.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <xdma_camera.h>
 
 #define ROUND_UP_2(num)  (((num)+1)&~1)
 #define ROUND_UP_4(num)  (((num)+3)&~3)
@@ -32,6 +33,7 @@ extern size_t framesize;
 extern size_t linewidth;
 
 void open_vpipe();
+void update_frame();
 void print_format(struct v4l2_format* );
 int format_properties(const unsigned int, const unsigned int, const unsigned int, size_t*, size_t*);
 void close_vpipe();
