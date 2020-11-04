@@ -168,7 +168,7 @@ int main(int argc, char** argv)
     printf("pattern %d\r\n", pattern);
     printf("loglevel %d\r\n", loglevel);
 
-
+    exit(0);
     open_vpipe();
     uint16_t i = 0;
     while (1)
