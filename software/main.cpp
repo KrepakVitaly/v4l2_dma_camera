@@ -122,6 +122,8 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         sscanf(opt_size, "%dx%d", &width, &height); // do sscanf
+        while ((c = getchar()) != '\n' && c != EOF)
+            /* discard */;
     }
 
     if (!opt_empty(opt_pix_fmt)) 
@@ -141,20 +143,27 @@ int main(int argc, char** argv)
 
     if (!opt_empty(opt_exp)) 
     {
-        printf("opt_exp is empty\n");
         sscanf(opt_exp+2, "%d", &exp); // do hex value sscanf
+        while ((c = getchar()) != '\n' && c != EOF)
+            /* discard */;
     }
     if (!opt_empty(opt_dig_iso)) 
     {
         sscanf(opt_dig_iso + 2, "%d", &dig_iso); // do hex value sscanf
+        while ((c = getchar()) != '\n' && c != EOF)
+            /* discard */;
     }
     if (!opt_empty(opt_pattern)) 
     {
         sscanf(opt_pattern, "%d", &pattern); // do value sscanf
+        while ((c = getchar()) != '\n' && c != EOF)
+            /* discard */;
     }
     if (!opt_empty(opt_loglevel))
     {
         sscanf(opt_loglevel, "%d", &loglevel); // do value sscanf
+        while ((c = getchar()) != '\n' && c != EOF)
+            /* discard */;
     }
     
     printf("video_dev %s\r\n", video_dev);
