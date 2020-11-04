@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
-        sscanf(opt_size, "%ux%u", &width, &height); // do sscanf
+        sscanf(opt_size, "%u x%u", &width, &height); // do sscanf
         //fflush_input();
     }
 
