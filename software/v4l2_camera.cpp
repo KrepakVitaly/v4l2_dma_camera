@@ -66,7 +66,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     print_format(&vid_format);
 
 
-    printf("get_pixformat_by_name %d \r\n", get_pixformat_by_name(pixfmt))
+    printf("get_pixformat_by_name %d \r\n", get_pixformat_by_name(pixfmt));
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = user_width;
