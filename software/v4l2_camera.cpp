@@ -4,7 +4,7 @@ int v4l2_fd_dev = 0; //v4l2 device to write
 uint8_t* videosendbuf = NULL;
 
 int user_width = DEFAULT_FRAME_WIDTH;
-int user_height = DEFAULT_FRAME_WIDTH;
+int user_height = DEFAULT_FRAME_HEIGHT;
 int user_linewidth = user_width*2;
 
 //int v4l2_width = 0;
