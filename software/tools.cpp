@@ -1,6 +1,6 @@
 #include "tools.h"
 
-void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uin16_t w, uin16_t h)
+void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint16_t h)
 {
     uint16_t pix_12bit_0 = 0;
     uint16_t pix_12bit_1 = 0;
