@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
-        sscanf(opt_size, "%dx%d%99[^\n]", &width, &height); // do sscanf
+        sscanf(opt_size, "%d x %d%99[^\n]", &width, &height); // do sscanf
         //fflush_input();
     }
 
@@ -144,13 +144,13 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_exp)) 
     {
         opt_exp[OPT_LEN - 1] = '\n';
-        sscanf(opt_exp+2, "%x%99[^\n]", &exp); // do hex value sscanf
+        sscanf(opt_exp, "0x %x%99[^\n]", &exp); // do hex value sscanf
         //fflush_input();
     }
     if (!opt_empty(opt_dig_iso)) 
     {
         opt_dig_iso[OPT_LEN - 1] = '\n';
-        sscanf(opt_dig_iso+2, "%x%99[^\n]", &dig_iso); // do hex value sscanf
+        sscanf(opt_dig_iso, "0x %x%99[^\n]", &dig_iso); // do hex value sscanf
         //fflush_input();
     }
     if (!opt_empty(opt_pattern)) 
