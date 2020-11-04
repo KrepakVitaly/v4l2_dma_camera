@@ -1,7 +1,7 @@
 #include "tools.h"
 
 void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint16_t h)
-{
+{/*
     uint16_t pix_12bit_0 = 0;
     uint16_t pix_12bit_1 = 0;
 
@@ -31,7 +31,7 @@ void reodrder_data_8to_12bit_rggb(uint8_t* src, uint8_t* dest, uint16_t w, uint1
                 printf("pix_12bit_0 0h%02x\r\n", pix_12bit_0);
                 printf("pix_12bit_1 0h%02x\r\n", pix_12bit_1);
             }
-        }
+        }*/
     /*
       for (int col = 0; col < 10; col++)
           for (int raw = 0; raw < 2; raw++)
