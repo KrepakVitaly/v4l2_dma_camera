@@ -3,9 +3,9 @@
 int v4l2_fd_dev = 0; //v4l2 device to write
 uint8_t* videosendbuf = NULL;
 
-int user_width = XDMA_FRAME_WIDTH;
-int user_height = XDMA_FRAME_WIDTH;
-int user_linewidth = XDMA_FRAME_WIDTH*2;
+int user_width = DEFAULT_FRAME_WIDTH;
+int user_height = DEFAULT_FRAME_WIDTH;
+int user_linewidth = user_width*2;
 
 //int v4l2_width = 0;
 //int v4l2_height = 0;
@@ -44,14 +44,13 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
     ret_code = ioctl(v4l2_fd_dev, VIDIOC_QUERYCAP, &vid_caps);
     assert(ret_code != -1);
 
-
     struct v4l2_fmtdesc vid_fmtdesc;
     memset(&vid_fmtdesc, 0, sizeof(vid_fmtdesc));
     vid_fmtdesc.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     printf("V4L2-get VIDIOC_ENUM_FMT\r\n");
     while (ioctl(v4l2_fd_dev, VIDIOC_ENUM_FMT, &vid_fmtdesc) == 0)
     {
-        printf("%s\n", vid_fmtdesc.description);
+        //printf("%s\n", vid_fmtdesc.description);
         vid_fmtdesc.index++;
     }
 
@@ -70,8 +69,8 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
     print_format(&vid_format);
 
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-    vid_format.fmt.pix.width = V4L2_FRAME_WIDTH;
-    vid_format.fmt.pix.height = V4L2_FRAME_HEIGHT;
+    vid_format.fmt.pix.width = user_width;
+    vid_format.fmt.pix.height = user_height;
     vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
     if (!format_properties(vid_format.fmt.pix.pixelformat,
         vid_format.fmt.pix.width, vid_format.fmt.pix.height,
