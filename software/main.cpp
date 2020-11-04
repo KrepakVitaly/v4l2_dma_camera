@@ -113,6 +113,7 @@ int main(int argc, char** argv)
         }
     }
 
+    char ch = 0; // tmp char for getchar fflush processing
     //print used parameters
     if (!opt_empty(opt_video_dev))
     {
@@ -122,7 +123,7 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         sscanf(opt_size, "%dx%d", &width, &height); // do sscanf
-        while ((c = getchar()) != '\n' && c != EOF)
+        while ((ch = getchar()) != '\n' && ch != EOF)
             /* discard */;
     }
 
