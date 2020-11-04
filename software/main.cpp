@@ -35,7 +35,8 @@ int main(int argc, char** argv)
     char* video_dev = DEFAULT_VIDEO_DEVICE;
     unsigned int width = DEFAULT_FRAME_WIDTH;
     unsigned int height = DEFAULT_FRAME_HEIGHT;
-    char* pix_fmt = DEFAULT_DIGITAL_PIX_FMT;
+    char pix_fmt[OPT_LEN]; memset(pix_fmt, 0x00, OPT_LEN);
+    strcpy(pix_fmt, DEFAULT_DIGITAL_PIX_FMT);
     char* xdma_dma = DEFAULT_XDMA_DEVICE_C2H;
     char* xdma_user = DEFAULT_XDMA_DEVICE_USER;
     unsigned int exp = DEFAULT_EXPOSURE;
