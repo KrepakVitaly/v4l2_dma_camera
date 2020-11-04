@@ -43,7 +43,7 @@ extern int fpga_fd_user;
 
 #define XDMA_CAM_DEBUG 0
 
-void get_dma_frame(uint8_t* , uint32_t, uint16_t);
+void get_dma_frame(uint8_t* , uint32_t);
 int exposure_frame();
 int init_dma_camera(char* devicename, char* reg_devicename, uint16_t exp, uint8_t pattern, uint16_t iso);
 int deinit_dma_camera();

@@ -25,7 +25,6 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
 {
     init_dma_camera(xdma_c2h, xdma_user, exp, pattern, iso);
 
-    const char* video_device = ;
     int ret_code = 0;
 
     printf("using output device: %s\r\n", video_device);

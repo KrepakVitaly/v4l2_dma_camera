@@ -5,7 +5,7 @@ int fpga_fd_user;
 
 void* map_base;
 
-void get_dma_frame(uint8_t* buffer, uint32_t size, uint16_t pattern)
+void get_dma_frame(uint8_t* buffer, uint32_t size)
 {
     //TODO add program generated pattern to use progrma without camera
     get_dma_data(XDMA_FRAME_BASE_ADDR,
