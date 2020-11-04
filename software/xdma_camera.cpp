@@ -156,9 +156,9 @@ int init_dma_camera(char* devicename)
     assert(fpga_fd_c2h >= 0);
     printf("character device %s opened.\n", devicename);
 
-    if ((fpga_fd_user = open(XDMA_DEVICE_USER_DEFAULT, O_RDWR | O_SYNC)) == -1) FATAL;
+    if ((fpga_fd_user = open(DEFAULT_XDMA_DEVICE_USER, O_RDWR | O_SYNC)) == -1) FATAL;
     assert(fpga_fd_user >= 0);
-    printf("character device %s opened.\n", XDMA_DEVICE_USER_DEFAULT);
+    printf("character device %s opened.\n", DEFAULT_XDMA_DEVICE_USER);
     fflush(stdout);
 
     /* map one page */

@@ -8,7 +8,7 @@ size_t linewidth = V4L2_FRAME_WIDTH;
 
 void open_vpipe()
 {
-    init_dma_camera(XDMA_DEVICE_C2H_DEFAULT);
+    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H);
 
     const char* video_device = DEFAULT_VIDEO_DEVICE;
     int ret_code = 0;
