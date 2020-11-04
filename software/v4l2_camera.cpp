@@ -154,12 +154,12 @@ int format_properties(const unsigned int format,
         lw = ROUND_UP_2(width);
         fw = lw * height;
         break;
-    case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12:
+    case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12: case V4L2_PIX_FMT_Y16:
         lw = (ROUND_UP_2(width) * 2);
         fw = lw * height;
         break;
     case V4L2_PIX_FMT_GREY:
-        lw = (ROUND_UP_2(width) * 2);
+        lw = (ROUND_UP_2(width));
         fw = lw * height;
         break;
     default:
