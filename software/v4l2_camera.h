@@ -35,9 +35,9 @@
 #define DEFAULT_PATTERN 0
 #define DEFAULT_DIGITAL_PIX_FMT "V4L2_PIX_FMT_SGRBG8"
 
-#define FRAME_FORMAT V4L2_PIX_FMT_SGRBG8//V4L2_PIX_FMT_Y16//V4L2_PIX_FMT_SRGGB12//V4L2_PIX_FMT_GREY//V4L2_PIX_FMT_SGRBG8
+//#define FRAME_FORMAT //V4L2_PIX_FMT_Y16//V4L2_PIX_FMT_SRGGB12//V4L2_PIX_FMT_GREY//V4L2_PIX_FMT_SGRBG8
 
-void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso);
+void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso);
 void update_frame();
 void print_format(struct v4l2_format* );
 int format_properties(const unsigned int, const unsigned int, const unsigned int, size_t*, size_t*);

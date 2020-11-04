@@ -17,8 +17,7 @@ size_t framesize = 0;
 size_t linewidth = 0;
 
 
-
-void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
+void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
     init_dma_camera(xdma_c2h, xdma_user, exp, pattern, iso);
 
@@ -69,7 +68,7 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
     vid_format.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
     vid_format.fmt.pix.width = user_width;
     vid_format.fmt.pix.height = user_height;
-    vid_format.fmt.pix.pixelformat = FRAME_FORMAT;
+    vid_format.fmt.pix.pixelformat = get_pixformat_by_name(pixfmt);
     if (!format_properties(vid_format.fmt.pix.pixelformat,
         vid_format.fmt.pix.width, vid_format.fmt.pix.height,
         &linewidth,
@@ -141,6 +140,41 @@ void print_format(struct v4l2_format* vid_format) {
     printf("	vid_format->fmt.pix.colorspace  =%d\n", vid_format->fmt.pix.colorspace);
 }
 
+
+unsigned int get_pixformat_by_name(char* pixfmr_str)
+{
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YUV420"))
+        return V4L2_PIX_FMT_YUV420;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YVU420"))
+        return V4L2_PIX_FMT_YVU420;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_UYVY"))
+        return V4L2_PIX_FMT_UYVY;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_Y41P"))
+        return V4L2_PIX_FMT_Y41P;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YUYV"))
+        return V4L2_PIX_FMT_YUYV;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YVYU"))
+        return V4L2_PIX_FMT_YVYU;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR8"))
+        return V4L2_PIX_FMT_SBGGR8;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG8"))
+        return V4L2_PIX_FMT_SGBRG8;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG8"))
+        return V4L2_PIX_FMT_SGRBG8;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB8"))
+        return V4L2_PIX_FMT_SRGGB8;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB12"))
+        return V4L2_PIX_FMT_SRGGB12;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG12"))
+        return V4L2_PIX_FMT_SGRBG12;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG12"))
+        return V4L2_PIX_FMT_SGBRG12;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR12"))
+        return V4L2_PIX_FMT_SBGGR12;
+    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_Y16"))
+        return V4L2_PIX_FMT_Y16;   
+}
+
 int format_properties(const unsigned int format,
     const unsigned int width,
     const unsigned int height,
@@ -185,7 +219,8 @@ int format_properties(const unsigned int format,
 void close_vpipe()
 {
     free(videosendbuf);
-    printf("vidsendbuf freed\r\n");
+    free(tmp_buf);
+    printf("video buffers freed\r\n");
     close(v4l2_fd_dev);
     printf("V4L2 sink closed\r\n");
     deinit_dma_camera();
