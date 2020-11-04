@@ -135,7 +135,7 @@ int main(int argc, char** argv)
         }
 
         if (!v1str || !v2str) {
-            fprintf(stderr, "size param format error");
+            fprintf(stderr, "size param format error\r\n");
             exit(1);
         }
 
@@ -161,26 +161,22 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_exp)) 
     {
         opt_exp[OPT_LEN - 1] = '\n';
-        sscanf(opt_exp, " 0x %x%99[^\n]", &exp); // do hex value sscanf
-        //fflush_input();
+        sscanf(opt_exp, "%x", &exp); // do hex value sscanf
     }
     if (!opt_empty(opt_dig_iso)) 
     {
         opt_dig_iso[OPT_LEN - 1] = '\n';
-        sscanf(opt_dig_iso, " 0x %x%99[^\n]", &dig_iso); // do hex value sscanf
-        //fflush_input();
+        sscanf(opt_dig_iso, "%x", &dig_iso); // do hex value sscanf
     }
     if (!opt_empty(opt_pattern)) 
     {
         opt_pattern[OPT_LEN - 1] = '\n';
         sscanf(opt_pattern, " %d%99[^\n]", &pattern); // do value sscanf
-        //fflush_input();
     }
     if (!opt_empty(opt_loglevel))
     {
         opt_loglevel[OPT_LEN - 1] = '\n';
         sscanf(opt_loglevel, " %d%99[^\n]", &loglevel); // do value sscanf
-        //fflush_input();
     }
     
     printf("video_dev %s\r\n", video_dev);
