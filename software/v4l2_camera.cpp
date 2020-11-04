@@ -1,15 +1,14 @@
 #include <v4l2_camera.h>
 
 int v4l2_fd_dev = 0; //v4l2 device to write
-uint8_t* videosendbuf = NULL; //
-//uint8_t* real_video = NULL;
+uint8_t* videosendbuf = NULL;
 
 int user_width = XDMA_FRAME_WIDTH;
 int user_height = XDMA_FRAME_WIDTH;
 int user_linewidth = XDMA_FRAME_WIDTH*2;
 
-int v4l2_width = 0;
-int v4l2_height = 0;
+//int v4l2_width = 0;
+//int v4l2_height = 0;
 
 //int resize_image_buf
 
@@ -18,8 +17,8 @@ int v4l2_height = 0;
 
 //int dma_size = real_width * real_height * 2;
 
-//size_t framesize = V4L2_FRAME_WIDTH * V4L2_FRAME_HEIGHT;
-//size_t linewidth = V4L2_FRAME_WIDTH;
+size_t framesize = 0;
+size_t linewidth = 0;
 
 void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
