@@ -202,6 +202,7 @@ int format_properties(const unsigned int format,
         lw = ROUND_UP_2(width);
         fw = lw * height;
         need_buf_reorder = 1;
+        printf("Slow mode with middle buffer for reorder bytes from 12 to 8 bit\r\n");
         break;
     case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12: case V4L2_PIX_FMT_Y16:
         lw = (ROUND_UP_2(width) * 2);
