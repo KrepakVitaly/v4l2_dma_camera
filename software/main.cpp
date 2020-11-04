@@ -211,6 +211,10 @@ int fflush_input()
 {
     char c = 0; // tmp char for getchar fflush processing
     while ((c = getchar()) != '\n' && c != EOF)
+    {
         /* discard */;
+        printf("%c\n", c);
+    };
+        
     return 0;
 }
