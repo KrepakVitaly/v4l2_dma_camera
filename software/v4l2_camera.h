@@ -12,7 +12,7 @@
 #include <malloc.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <xdma_camera.h>
+#include "xdma_camera.h"
 
 #define ROUND_UP_2(num)  (((num)+1)&~1)
 #define ROUND_UP_4(num)  (((num)+3)&~3)
