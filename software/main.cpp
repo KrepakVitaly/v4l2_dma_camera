@@ -122,8 +122,25 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
-        sscanf(opt_size, "%u x%u", &width, &height); // do sscanf
-        //fflush_input();
+        //sscanf(opt_size, "%u x%u", &width, &height); // do sscanf
+
+        char delim_str[] = "x";
+
+        char* v1str = NULL;
+        char* v2str = NULL;
+
+        v1str = strtok(opt_size, delim_str);
+        if (v1str != NULL) {
+            v2str = strtok(NULL, delim_str);
+        }
+
+        if (!v1str || !v2str) {
+            fprintf(stderr, "size param format error");
+            exit(1);
+        }
+
+        width = strtod(v1str, NULL);
+        height = strtod(v2str, NULL);
     }
 
     if (!opt_empty(opt_pix_fmt)) 
