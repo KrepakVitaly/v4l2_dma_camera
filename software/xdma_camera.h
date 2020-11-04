@@ -30,8 +30,8 @@
 #define MAP_SIZE (32*1024UL)
 #define MAP_MASK (MAP_SIZE - 1)
 
-#define XDMA_DEVICE_C2H_DEFAULT "/dev/xdma0_c2h_0"
-#define XDMA_DEVICE_USER_DEFAULT  "/dev/xdma0_user"
+#define DEFAULT_XDMA_DEVICE_C2H "/dev/xdma0_c2h_0"
+#define DEFAULT_XDMA_DEVICE_USER  "/dev/xdma0_user"
 #define XDMA_FRAME_BASE_ADDR 0x200000
 
 #define XDMA_FRAME_WIDTH  2064
@@ -45,7 +45,6 @@ extern int real_width;
 extern int real_height;
 
 #define XDMA_CAM_DEBUG 0
-
 
 void get_dma_frame(uint8_t* , uint32_t, uint16_t);
 int exposure_frame();
