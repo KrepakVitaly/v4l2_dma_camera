@@ -113,11 +113,11 @@ void open_vpipe(char* video_device, char* xdma_c2h, char* xdma_user, uint16_t ex
 
 void update_frame()
 {
-    printf("Start exposure_frame\r\n");
+    //printf("Start exposure_frame\r\n");
     exposure_frame();
-    printf("Start get_dma_frame\r\n");
+    //printf("Start get_dma_frame\r\n");
     get_dma_frame(videosendbuf, framesize);
-    printf("Start write v4l2_fd_dev\r\n");
+    //printf("Start write v4l2_fd_dev\r\n");
     write(v4l2_fd_dev, videosendbuf, framesize);
 }
 

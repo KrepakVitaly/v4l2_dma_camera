@@ -193,8 +193,10 @@ int main(int argc, char** argv)
     {
         i++;
         update_frame();
-        usleep(41000);
+        usleep(1000);
         if (DEBUG == 1)
+            printf("Frame %d\r\n", i);
+        if (i == 100)
             printf("Frame %d\r\n", i);
     }
 
