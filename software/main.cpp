@@ -157,16 +157,16 @@ int main(int argc, char** argv)
         sscanf(opt_loglevel, "%d", &loglevel); // do value sscanf
     }
     
-    printf("video_dev %s", video_dev);
-    printf("width %d", width);
-    printf("height %d", height);
+    printf("video_dev %s\r\n", video_dev);
+    printf("width %d\r\n", width);
+    printf("height %d\r\n", height);
     //printf("pix_fmt %s", pix_fmt);
-    printf("xdma_dma %s", xdma_dma);
-    printf("xdma_user %s", xdma_user);
-    printf("exp %x", exp);
-    printf("dig_iso %x", dig_iso);
-    printf("pattern %d", pattern);
-    printf("loglevel %d", loglevel);
+    printf("xdma_dma %s\r\n", xdma_dma);
+    printf("xdma_user %s\r\n", xdma_user);
+    printf("exp %x\r\n", exp);
+    printf("dig_iso %x\r\n", dig_iso);
+    printf("pattern %d\r\n", pattern);
+    printf("loglevel %d\r\n", loglevel);
 
 
     open_vpipe();
