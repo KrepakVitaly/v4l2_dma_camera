@@ -17,7 +17,7 @@ ffmpeg  -re \
     -thread_queue_size 512 \
     -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 \
     -f v4l2 -i /dev/video0  -framerate $FPS \
-    -tune stillimage -tune zerolatency -s 1280x720 \
+    -tune zerolatency  \
     -vcodec libx264 -bf 2 -preset $QUAL -r $FPS -g $(($FPS * 2)) -b:v $VBR \
     -f flv "$YOUTUBE_URL/$KEY"
 
