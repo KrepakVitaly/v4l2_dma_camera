@@ -146,35 +146,35 @@ void print_format(struct v4l2_format* vid_format) {
 
 unsigned int get_pixformat_by_name(char* pixfmr_str)
 {
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YUV420"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_YUV420"))
         return V4L2_PIX_FMT_YUV420;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YVU420"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_YVU420"))
         return V4L2_PIX_FMT_YVU420;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_UYVY"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_UYVY"))
         return V4L2_PIX_FMT_UYVY;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_Y41P"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_Y41P"))
         return V4L2_PIX_FMT_Y41P;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YUYV"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_YUYV"))
         return V4L2_PIX_FMT_YUYV;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_YVYU"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_YVYU"))
         return V4L2_PIX_FMT_YVYU;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR8"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR8"))
         return V4L2_PIX_FMT_SBGGR8;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG8"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG8"))
         return V4L2_PIX_FMT_SGBRG8;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG8"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG8"))
         return V4L2_PIX_FMT_SGRBG8;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB8"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB8"))
         return V4L2_PIX_FMT_SRGGB8;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB12"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SRGGB12"))
         return V4L2_PIX_FMT_SRGGB12;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG12"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SGRBG12"))
         return V4L2_PIX_FMT_SGRBG12;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG12"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SGBRG12"))
         return V4L2_PIX_FMT_SGBRG12;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR12"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_SBGGR12"))
         return V4L2_PIX_FMT_SBGGR12;
-    if (strcmp(pixfmr_str, "V4L2_PIX_FMT_Y16"))
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_Y16"))
         return V4L2_PIX_FMT_Y16;   
 
     return -1;
