@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         sscanf(opt_size, "%dx%d", &width, &height); // do sscanf
-        fflush_input();
+        //fflush_input();
     }
 
     if (!opt_empty(opt_pix_fmt)) 
@@ -142,23 +142,23 @@ int main(int argc, char** argv)
 
     if (!opt_empty(opt_exp)) 
     {
-        sscanf(opt_exp+2, "%d", &exp); // do hex value sscanf
-        fflush_input();
+        sscanf(opt_exp+2, "%x", &exp); // do hex value sscanf
+        //fflush_input();
     }
     if (!opt_empty(opt_dig_iso)) 
     {
-        sscanf(opt_dig_iso + 2, "%d", &dig_iso); // do hex value sscanf
-        fflush_input();
+        sscanf(opt_dig_iso+2, "%x", &dig_iso); // do hex value sscanf
+        //fflush_input();
     }
     if (!opt_empty(opt_pattern)) 
     {
         sscanf(opt_pattern, "%d", &pattern); // do value sscanf
-        fflush_input();
+        //fflush_input();
     }
     if (!opt_empty(opt_loglevel))
     {
         sscanf(opt_loglevel, "%d", &loglevel); // do value sscanf
-        fflush_input();
+        //fflush_input();
     }
     
     printf("video_dev %s\r\n", video_dev);
