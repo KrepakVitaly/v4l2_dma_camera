@@ -33,8 +33,8 @@ int main(int argc, char** argv)
     char opt_loglevel[OPT_LEN];  memset(opt_loglevel, 0x00, OPT_LEN);
 
     char* video_dev = DEFAULT_VIDEO_DEVICE;
-    uint16_t width = DEFAULT_FRAME_WIDTH;
-    uint16_t height = DEFAULT_FRAME_HEIGHT;
+    unsigned int width = DEFAULT_FRAME_WIDTH;
+    unsigned int height = DEFAULT_FRAME_HEIGHT;
     char* pix_fmt = DEFAULT_DIGITAL_PIX_FMT;
     char* xdma_dma = DEFAULT_XDMA_DEVICE_C2H;
     char* xdma_user = DEFAULT_XDMA_DEVICE_USER;
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     if (!opt_empty(opt_size)) 
     {
         opt_size[OPT_LEN - 1] = '\n';
-        sscanf(opt_size, " %u x %u", &width, &height); // do sscanf
+        sscanf(opt_size, "%ux%u", &width, &height); // do sscanf
         //fflush_input();
     }
 
