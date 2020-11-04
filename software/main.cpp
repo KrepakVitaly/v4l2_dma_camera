@@ -209,12 +209,15 @@ int opt_empty(char* c)
 
 int fflush_input()
 {
-    char c = 0; // tmp char for getchar fflush processing
-    while ((c = getchar()) != '\n' && c != EOF)
+    int counter = 0;
+    int ch = 0; // tmp char for getchar fflush processing
+    printf("start %c\n", c);
+    while ((ch = getchar()) != '\n' && ch != EOF)
     {
         /* discard */;
+        counter++;
         printf("%c\n", c);
     };
-        
+    printf("%i\n", counter);
     return 0;
 }
