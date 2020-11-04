@@ -124,9 +124,6 @@ int main(int argc, char** argv)
         opt_size[OPT_LEN - 1] = '\n';
         sscanf(opt_size, "%dx%d", &width, &height); // do sscanf
         //fflush_input();
-
-        if ((sscanf(command, "flag (%1c,%d)%n", &x1, &y1, &n)) == 2) &&
-            (command[n] == '\0')) Success();
     }
 
     if (!opt_empty(opt_pix_fmt)) 
