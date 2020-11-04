@@ -12,7 +12,8 @@ size_t linewidth = V4L2_FRAME_WIDTH;
 
 void open_vpipe()
 {
-    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H, DEFAULT_XDMA_DEVICE_USER, real_width * real_height * 2);
+
+    init_dma_camera(DEFAULT_XDMA_DEVICE_C2H, DEFAULT_XDMA_DEVICE_USER, real_width * real_height * 2, DEFAULT_EXPOSURE, DEFAULT_PATTERN, DEFAULT_DIGITAL_ISO);
 
     real_video = (char*)malloc(sizeof(char) * dma_size);
     init_buffer_size = dma_size;
