@@ -159,6 +159,10 @@ int format_properties(const unsigned int format,
         lw = (ROUND_UP_2(width) * 2);
         fw = lw * height;
         break;
+    case V4L2_PIX_FMT_GREY:
+        lw = (ROUND_UP_2(width) * 2);
+        fw = lw * height;
+        break;
     default:
         return 0;
     }
