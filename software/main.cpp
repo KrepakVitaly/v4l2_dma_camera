@@ -155,23 +155,27 @@ int main(int argc, char** argv)
     }
     if (!opt_empty(opt_exp)) 
     {
-        opt_exp[OPT_LEN - 1] = '\n';
-        sscanf(opt_exp+2, "%x", &exp); // do hex value sscanf
+        //opt_exp[OPT_LEN - 1] = '\n';
+        //sscanf(opt_exp+2, "%x", &exp); // do hex value sscanf
+        exp = strtol(opt_exp + 2, NULL, 16);
     }
     if (!opt_empty(opt_dig_iso)) 
     {
-        opt_dig_iso[OPT_LEN - 1] = '\n';
-        sscanf(opt_dig_iso+2, "%x", &dig_iso); // do hex value sscanf
+        //opt_dig_iso[OPT_LEN - 1] = '\n';
+        //sscanf(, "%x", &dig_iso); // do hex value sscanf
+        dig_iso = strtol(opt_dig_iso + 2, NULL, 16);
     }
     if (!opt_empty(opt_pattern)) 
     {
-        opt_pattern[OPT_LEN - 1] = '\n';
-        sscanf(opt_pattern, "%u", &pattern); // do value sscanf
+        //opt_pattern[OPT_LEN - 1] = '\n';
+        //sscanf(opt_pattern, "%u", &pattern); // do value sscanf
+        pattern = strtol(opt_pattern, NULL, 10);
     }
     if (!opt_empty(opt_loglevel))
     {
-        opt_loglevel[OPT_LEN - 1] = '\n';
-        sscanf(opt_loglevel, "%u", &loglevel); // do value sscanf
+        //opt_loglevel[OPT_LEN - 1] = '\n';
+        //sscanf(opt_loglevel, "%u", &loglevel); // do value sscanf
+        loglevel = strtol(opt_loglevel, NULL, 10);
     }
     
     if (loglevel >= 1)
