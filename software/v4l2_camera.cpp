@@ -106,7 +106,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     print_format(&vid_format);
 
     videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
-     
+    
     if (need_buf_reorder == 1)
     {
         tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2);
@@ -120,8 +120,13 @@ void update_frame()
     exposure_frame();
     if (need_buf_reorder == 1)
     {
-        get_dma_frame(tmp_buf, user_width*user_height*2);
-        reodrder_data_8to_12bit_rggb(tmp_buf, user_width, user_height, videosendbuf, linewidth, framesize/linewidth);
+        get_dma_frame(tmp_buf, user_width * user_height * 2);
+        reodrder_data_8to_12bit_rggb(tmp_buf, user_width, user_height, videosendbuf, linewidth, framesize / linewidth);
+    }
+    if (need_buf_reorder == 2)
+    {
+        get_dma_frame(tmp_buf, user_width * user_height * 4);
+        reodrder_data_ir_camera_rggb(tmp_buf, user_width, user_height, videosendbuf, linewidth, framesize / linewidth);
     }
     else
     {
@@ -176,7 +181,8 @@ unsigned int get_pixformat_by_name(char* pixfmr_str)
         return V4L2_PIX_FMT_SBGGR12;
     if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_Y16"))
         return V4L2_PIX_FMT_Y16;   
-
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_GREY"))
+        return V4L2_PIX_FMT_GREY;
     return -1;
 }
 
@@ -204,13 +210,14 @@ int format_properties(const unsigned int format,
         need_buf_reorder = 1;
         printf("Slow mode with middle buffer for reorder bytes from 12 to 8 bit\r\n");
         break;
-    case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12: case V4L2_PIX_FMT_Y16:
+    case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12:
         lw = (ROUND_UP_2(width) * 2);
         fw = lw * height;
         break;
-    case V4L2_PIX_FMT_GREY:
+    case V4L2_PIX_FMT_GREY: case V4L2_PIX_FMT_Y16:
         lw = (ROUND_UP_2(width));
         fw = lw * height;
+        need_buf_reorder = 2; // IR camera format
         break;
     default:
         return 0;
