@@ -191,6 +191,15 @@ unsigned int get_pixformat_by_name(char* pixfmr_str)
         return V4L2_PIX_FMT_Y16;   
     if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_GREY"))
         return V4L2_PIX_FMT_GREY;
+
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_ABGR32"))
+        return V4L2_PIX_FMT_ABGR32;
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_ARGB32"))
+        return V4L2_PIX_FMT_ARGB32;
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_XBGR32"))
+        return V4L2_PIX_FMT_XBGR32;
+    if (!strcmp(pixfmr_str, "V4L2_PIX_FMT_XRGB32"))
+        return V4L2_PIX_FMT_XRGB32;
     return -1;
 }
 
