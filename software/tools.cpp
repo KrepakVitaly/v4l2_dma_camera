@@ -18,7 +18,7 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
     uint16_t pix_16bit = 0;
     uint8_t pix_8bit = 0;
 
-    if (1)
+    if (0)
     {
         printf("reodrder_data_ir_camera_rggb src_w %d src_h %d dest_w %d dest_h %d \r\n", src_w, src_h, dest_w, dest_h);
     }
