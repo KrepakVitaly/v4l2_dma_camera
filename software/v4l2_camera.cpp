@@ -107,15 +107,15 @@ void open_vpipe(char* video_device, unsigned int width, unsigned int height, cha
     }
     print_format(&vid_format);
 
-    videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize * 2);
+    videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
     
     if (need_buf_reorder == 1)
     {
-        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2 * 2);
+        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2);
     }
     if (need_buf_reorder == 2)
     {
-        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 4 * 2);
+        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 4);
     }
     return;
 }
