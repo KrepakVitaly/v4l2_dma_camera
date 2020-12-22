@@ -36,7 +36,7 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
             pix_16bit_3 = src[raw * dest_w + col + 3];
 
             dest[raw * dest_w / 2 + dest_col + 0] = pix_16bit_0;
-            dest[raw * dest_w / 2 + dest_col + 1] = pix_16bit_0;
+            dest[raw * dest_w / 2 + dest_col + 1] = pix_16bit_1;
             dest_col += 2;
         }
         dest_col = 0;
