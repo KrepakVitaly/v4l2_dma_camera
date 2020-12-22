@@ -244,7 +244,8 @@ int format_properties(const unsigned int format,
     default:
         return 0;
     }
-
+    printf("format_properties: linewidth %d\r\n", lw);
+    printf("format_properties: framewidth %d\r\n", fw);
     if (linewidth) *linewidth = lw;
     if (framewidth) *framewidth = fw;
 
