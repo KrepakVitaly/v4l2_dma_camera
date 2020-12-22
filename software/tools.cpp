@@ -23,14 +23,34 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
         printf("reodrder_data_ir_camera_rggb src_w %d src_h %d dest_w %d dest_h %d \r\n", src_w, src_h, dest_w, dest_h);
     }
 
+    int dest_raw = 0;
+    int dest_col = 0;
+
+    for (int raw = 0; raw < dest_h; raw++)
+    {
+        for (int col = 0; col < dest_w; col = col + 4)
+        {
+            pix_16bit_0 = src[raw * dest_w + col + 0];
+            pix_16bit_1 = src[raw * dest_w + col + 1];
+            pix_16bit_2 = src[raw * dest_w + col + 2];
+            pix_16bit_3 = src[raw * dest_w + col + 3];
+
+            dest[raw * dest_w / 2 + dest_col + 0] = pix_16bit_0;
+            dest[raw * dest_w / 2 + dest_col + 1] = pix_16bit_0;
+            dest_col += 2;
+        }
+        dest_col = 0;
+    }
+
+    /*
     for (int raw = 0; raw < dest_h; raw++)
         for (int col = 0; col < dest_w; col=col+4)
         {
-            /*if ((raw * src_w * 4 + col * 4  + 3) >= src_w * src_h * 4)
+            if ((raw * src_w * 4 + col * 4  + 3) >= src_w * src_h * 4)
             {
                 //dest[raw * dest_w + col] = 0x66;
                 continue;
-            }*/
+            }
             
             pix_16bit_0 = src[raw * dest_w + col + 0];
             pix_16bit_1 = src[raw * dest_w + col + 1];
@@ -39,7 +59,7 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
             pix_16bit = (pix_16bit_3 + (pix_16bit_2 << 8)) >> 4;
 
             //pix_8bit++; = uint8_t(pix_16bit);
-            dest[raw * dest_w + col + 0] = 55;// src[raw * dest_w + col];
+            dest[raw * dest_w + col + 0] = 0;// src[raw * dest_w + col];
             dest[raw * dest_w + col + 1] = pix_16bit_1;// ((pix_16bit_1 << 8) + (pix_16bit_0)) >> 4;// src[raw * dest_w + col];
             dest[raw * dest_w + col + 2] = pix_16bit_1;// src[raw * dest_w + col];
             dest[raw * dest_w + col + 3] = 1;
@@ -60,7 +80,7 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
                 printf("pix_16bit_2 0h%02x\r\n", pix_16bit_2);
                 printf("pix_16bit_3 0h%02x\r\n", pix_16bit_3);
             }
-        }
+        }*/
     if (1)
     {
         for (int raw = 0; raw < 2; raw++)
