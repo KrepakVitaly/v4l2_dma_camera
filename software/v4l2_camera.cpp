@@ -83,7 +83,7 @@ void open_vpipe(char* video_device, unsigned int width, unsigned int height, cha
     vid_format.fmt.pix.sizeimage = framesize;
     vid_format.fmt.pix.bytesperline = linewidth;
     vid_format.fmt.pix.field = V4L2_FIELD_NONE;
-    vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_SRGB; //V4L2_COLORSPACE_RAW;
+    vid_format.fmt.pix.colorspace = V4L2_COLORSPACE_DEFAULT; //V4L2_COLORSPACE_RAW;
 
     printf("V4L2-set-0 VIDIOC_S_FMT\r\n");
     print_format(&vid_format);
@@ -215,7 +215,7 @@ int format_properties(const unsigned int format,
     case V4L2_PIX_FMT_SBGGR8: case V4L2_PIX_FMT_SGBRG8: case V4L2_PIX_FMT_SGRBG8: case V4L2_PIX_FMT_SRGGB8:
         lw = ROUND_UP_2(width);
         fw = lw * height;
-        need_buf_reorder = 1;
+        //need_buf_reorder = 1;
         printf("Slow mode with middle buffer for reorder bytes from 12 to 8 bit\r\n");
         break;
     case V4L2_PIX_FMT_SRGGB12: case V4L2_PIX_FMT_SGRBG12: case V4L2_PIX_FMT_SGBRG12: case V4L2_PIX_FMT_SBGGR12:
