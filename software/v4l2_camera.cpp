@@ -5,7 +5,6 @@ uint8_t* videosendbuf = NULL;
 
 int user_width = DEFAULT_FRAME_WIDTH;
 int user_height = DEFAULT_FRAME_HEIGHT;
-int user_linewidth = user_width*2;
 
 uint8_t need_buf_reorder = 0;
 uint8_t* tmp_buf = NULL;
@@ -17,8 +16,11 @@ size_t framesize = 0;
 size_t linewidth = 0;
 
 
-void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
+void open_vpipe(char* video_device, unsigned int width, unsigned int height, char* pixfmt, char* xdma_c2h, char* xdma_user, uint16_t exp, uint8_t pattern, uint16_t iso)
 {
+    user_width = width;
+    user_height = height;
+
     init_dma_camera(xdma_c2h, xdma_user, exp, pattern, iso);
 
     int ret_code = 0;

@@ -192,7 +192,7 @@ int main(int argc, char** argv)
         printf("loglevel %d\r\n", loglevel);
     }
 
-    open_vpipe(video_dev, pix_fmt, xdma_dma, xdma_user, exp, pattern, dig_iso);
+    open_vpipe(video_dev, width, height, pix_fmt, xdma_dma, xdma_user, exp, pattern, dig_iso);
     uint16_t i = 0;
     while (1)
     {
