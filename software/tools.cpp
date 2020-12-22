@@ -39,10 +39,10 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
             pix_16bit = (pix_16bit_3 + (pix_16bit_2 << 8)) >> 4;
 
             //pix_8bit++; = uint8_t(pix_16bit);
-            dest[raw * dest_w + col + 0] = 0;// src[raw * dest_w + col];
-            dest[raw * dest_w + col + 1] = 0;// src[raw * dest_w + col];
-            dest[raw * dest_w + col + 2] = pix_16bit;// src[raw * dest_w + col];
-            dest[raw * dest_w + col + 3] = pix_16bit;
+            dest[raw * dest_w + col + 0] = pix_16bit_0;// src[raw * dest_w + col];
+            dest[raw * dest_w + col + 1] = pix_16bit_1;// src[raw * dest_w + col];
+            dest[raw * dest_w + col + 2] = pix_16bit_2;// src[raw * dest_w + col];
+            dest[raw * dest_w + col + 3] = pix_16bit_3;
             
             //dest[raw * dest_w * 4 + col * 4 + 0] = pix_16bit_0;
             //dest[raw * dest_w * 4 + col * 4 + 1] = pix_16bit_1;
@@ -61,19 +61,18 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
                 printf("pix_16bit_3 0h%02x\r\n", pix_16bit_3);
             }
         }
-    if (0)
+    if (1)
     {
         for (int col = 0; col < 10; col++)
             for (int raw = 0; raw < 2; raw++)
             {
-                printf("src[%d * src_h + %d * 2 + 0] %02x \r\n", col, raw, src[col * src_h + raw * 2 + 0]);
-                printf("src[%d * src_h + %d * 2 + 1] %02x \r\n", col, raw, src[col * src_h + raw * 2 + 1]);
-                printf("dest[%d * dest_h + %d]     %02x  \r\n", col, raw, dest[col * dest_h + raw]);
+                printf("src[%d * dest_w + %d * col] %02x \r\n", col, raw, src[raw * dest_w + col]);
+                printf("dest[%d * dest_w + %d * col] %02x  \r\n", col, raw, dest[raw * dest_w + col]);
             }
 
         for (int i = 0; i < 16; i++)
         {
-            printf("src[%d] %02x \r\n", i, src[i]);
+            //printf("src[%d] %02x \r\n", i, src[i]);
         }
     }
 }
