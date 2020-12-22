@@ -106,7 +106,7 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     print_format(&vid_format);
 
     videosendbuf = (uint8_t*)malloc(sizeof(uint8_t) * framesize);
-
+     
     if (need_buf_reorder == 1)
     {
         tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2);
