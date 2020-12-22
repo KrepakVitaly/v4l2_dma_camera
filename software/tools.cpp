@@ -21,11 +21,11 @@ void reodrder_data_ir_camera_rggb(uint8_t* src, uint16_t src_w, uint16_t src_h, 
     for (int raw = 0; raw < dest_h; raw++)
         for (int col = 0; col < dest_w; col++)
         {
-            /*if ((raw * src_w * 4 + col * 4 ) >= src_w * src_h * 4)
+            if ((raw * src_w * 4 + col * 4  + 3) >= src_w * src_h * 4)
             {
                 //dest[raw * dest_w + col] = 0x66;
                 continue;
-            }*/
+            }
 
             pix_16bit_0 = src[raw * src_w * 4 + col * 4 + 0]; //ignore
             pix_16bit_1 = src[raw * src_w * 4 + col * 4 + 1]; //ignore
