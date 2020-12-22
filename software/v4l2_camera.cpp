@@ -111,15 +111,21 @@ void open_vpipe(char* video_device, char* pixfmt, char* xdma_c2h, char* xdma_use
     {
         tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 2);
     }
-
+    if (need_buf_reorder == 2)
+    {
+        tmp_buf = (uint8_t*)malloc(sizeof(uint8_t) * user_width * user_height * 4);
+    }
     return;
 }
 
 void update_frame()
 {
+    int xdma_width = user_width;
+    int xdma_height = user_height;
     exposure_frame();
     if (need_buf_reorder == 1)
     {
+
         get_dma_frame(tmp_buf, user_width * user_height * 2);
         reodrder_data_8to_12bit_rggb(tmp_buf, user_width, user_height, videosendbuf, linewidth, framesize / linewidth);
     }
