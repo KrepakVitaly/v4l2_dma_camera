@@ -234,12 +234,12 @@ int format_properties(const unsigned int format,
     case V4L2_PIX_FMT_GREY: case V4L2_PIX_FMT_Y16:
         lw = (ROUND_UP_2(width) * 2);
         fw = lw * height;
-        //need_buf_reorder = 2; // IR camera format
+        need_buf_reorder = 2; // IR camera format
         break;
     case V4L2_PIX_FMT_ABGR32: case V4L2_PIX_FMT_ARGB32: case V4L2_PIX_FMT_XBGR32: case V4L2_PIX_FMT_XRGB32:
         lw = (ROUND_UP_2(width) * 4);
         fw = lw * height;
-        //need_buf_reorder = 2; // IR camera format
+        need_buf_reorder = 2; // IR camera format
         break;
     default:
         return 0;
