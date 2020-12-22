@@ -227,6 +227,12 @@ int format_properties(const unsigned int format,
         fw = lw * height;
         need_buf_reorder = 2; // IR camera format
         break;
+    case V4L2_PIX_FMT_ABGR32:
+        lw = (ROUND_UP_2(width) * 4);
+        fw = lw * height;
+        //need_buf_reorder = 2; // IR camera format
+        break;
+        
     default:
         return 0;
     }
